@@ -1,0 +1,75 @@
+Filesystem mounted and log file cleared.
+DEBUG: getattr failed, path not found: /dir1
+DEBUG: mkdir_callback called with path = /dir1, permissions = 755
+DEBUG: Directory added successfully: /dir1
+DEBUG: Directory found: /dir1
+DEBUG: getattr for directory: /dir1
+DEBUG: Directory found: /dir1
+DEBUG: getattr for directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: getattr failed, path not found: /dir1/file
+DEBUG: Parent directory is /dir1
+DEBUG: Directory found: /dir1
+DEBUG: Added file: file in directory: /dir1
+DEBUG: File created successfully: file in directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: File found: file in directory: /dir1
+DEBUG: Updated timestamps for file: file in directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: File found: file in directory: /dir1
+DEBUG: getattr for file: file in directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: File found: file in directory: /dir1
+DEBUG: Updated timestamps for file: file in directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: File found: file in directory: /dir1
+DEBUG: getattr for file: file in directory: /dir1
+DEBUG: Directory found: /dir1
+DEBUG: getattr for directory: /dir1
+DEBUG: getattr failed, path not found: /dir2
+DEBUG: mkdir_callback called with path = /dir2, permissions = 755
+DEBUG: Directory added successfully: /dir2
+DEBUG: Directory found: /dir2
+DEBUG: getattr for directory: /dir2
+DEBUG: readdir_callback called with path = /
+DEBUG: Parent_dir: / and path: /
+DEBUG: Listed directory: dir1
+DEBUG: Parent_dir: / and path: /
+DEBUG: Listed directory: dir2
+DEBUG: Directory found: /dir1
+DEBUG: getattr for directory: /dir1
+DEBUG: Directory found: /dir2
+DEBUG: getattr for directory: /dir2
+DEBUG: Directory found: /dir1
+DEBUG: getattr for directory: /dir1
+DEBUG: Directory found: /dir1
+DEBUG: getattr for directory: /dir1
+DEBUG: readdir_callback called with path = /dir1
+DEBUG: Parent_dir: / and path: /dir1
+DEBUG: Parent_dir: / and path: /dir1
+DEBUG: Listed file: file in directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: File found: file in directory: /dir1
+DEBUG: getattr for file: file in directory: /dir1
+DEBUG: Directory found: /dir1
+DEBUG: getattr for directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: File found: file in directory: /dir1
+DEBUG: getattr for file: file in directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: File found: file in directory: /dir1
+DEBUG: File opened successfully: file in directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: getattr failed, path not found: /dir1/name
+DEBUG: Parent directory is /dir1
+DEBUG: Directory found: /dir1
+DEBUG: Added file: name in directory: /dir1
+DEBUG: File created successfully: name in directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: File found: name in directory: /dir1
+DEBUG: Updated timestamps for file: name in directory: /dir1
+DEBUG: Parent directory is /dir1
+DEBUG: File found: name in directory: /dir1
+DEBUG: getattr for file: name in directory: /dir1
+DEBUG: Directory found: /dir1
+DEBUG: getattr for directory: /dir1

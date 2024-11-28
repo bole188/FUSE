@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example",
+  "command": "/usr/bin/cc    -D_FILE_OFFSET_BITS=64 -g -Wall --pedantic -g -o CMakeFiles/fuse-example.dir/fuse-example.c.o -c /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/fuse-example.c",
+  "file": "/home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/fuse-example.c"
+}
+]
