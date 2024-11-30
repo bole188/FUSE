@@ -36,5 +36,6 @@ DeviceEntry *create_and_add_device_entry(const char *name, const char *model,
                                  int serial_number, time_t registration_date, 
                                  int imei, EntryType type);
 int is_valid_model(const char *model, EntryType type);
+void add_device_to_json(DeviceEntry *device, const char *json_path, const char *parent_name);
 
 #endif // DEVICE_MANAGER_H

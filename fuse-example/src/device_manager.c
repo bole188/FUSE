@@ -1,4 +1,5 @@
 #include "device_manager.h"
+#include<json-c/json.h>
 
 DeviceEntry* device_storage = NULL;
 int device_count = 0; 
@@ -89,4 +90,96 @@ DeviceEntry *create_and_add_device_entry(const char *name, const char *model,
 }
 
 
+void add_device_to_json(DeviceEntry *device, const char *json_path, const char *parent_name) {
+    if (device == NULL || json_path == NULL || parent_name == NULL) {
+        fprintf(stderr, "Invalid parameters to add_device_to_json\n");
+        return;
+    }
+
+    // Load the existing JSON file
+    FILE *file = fopen(json_path, "r");
+    struct json_object *root = NULL;
+
+    if (file != NULL) {
+        fseek(file, 0, SEEK_END);
+        size_t file_size = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        char *json_data = malloc(file_size + 1);
+        fread(json_data, 1, file_size, file);
+        json_data[file_size] = '\0';
+        fclose(file);
+
+        root = json_tokener_parse(json_data);
+        free(json_data);
+    }
+
+    // If the JSON file doesn't exist or is empty, initialize a new root object
+    if (root == NULL) {
+        root = json_object_new_object();
+    }
+
+    // Recursive function to find the parent folder and add the device
+    void add_to_parent(struct json_object *current, const char *parent_name, struct json_object *device_json) {
+        struct json_object *name_field = NULL;
+
+        // Check if the current object matches the parent folder
+        if (json_object_object_get_ex(current, "Name", &name_field) &&
+            strcmp(json_object_get_string(name_field), parent_name) == 0) {
+
+            // Ensure the current object has a "Children" array
+            struct json_object *children_array = NULL;
+            if (!json_object_object_get_ex(current, "Children", &children_array)) {
+                children_array = json_object_new_array();
+                json_object_object_add(current, "Children", children_array);
+            }
+
+            // Add the new device to the "Children" array
+            json_object_array_add(children_array, device_json);
+            return;
+        }
+
+        // Recursively search in the "Children" array
+        struct json_object *children_array = NULL;
+        if (json_object_object_get_ex(current, "Children", &children_array)) {
+            int child_count = json_object_array_length(children_array);
+            for (int i = 0; i < child_count; i++) {
+                struct json_object *child = json_object_array_get_idx(children_array, i);
+                add_to_parent(child, parent_name, device_json);
+            }
+        }
+    }
+
+    // Create the JSON object for the new device
+    struct json_object *device_json = json_object_new_object();
+    json_object_object_add(device_json, "Name", json_object_new_string(device->name));
+    json_object_object_add(device_json, "Model", json_object_new_string(device->model));
+    json_object_object_add(device_json, "SerialNumber", json_object_new_int(device->serial_number));
+    json_object_object_add(device_json, "RegistrationDate", json_object_new_int64(device->registration_date));
+    json_object_object_add(device_json, "IMEI", json_object_new_int(device->imei));
+    json_object_object_add(device_json, "Type",
+                           json_object_new_string(device->type == FOLDER_TYPE ? "Folder" : "File"));
+
+    // Only add "Children" if it's a folder
+    if (device->type == FOLDER_TYPE) {
+        json_object_object_add(device_json, "Children", json_object_new_array());
+    }
+
+    // Add the device to the correct parent folder
+    add_to_parent(root, parent_name, device_json);
+
+    // Save the updated JSON back to the file
+    file = fopen(json_path, "w");
+    if (file == NULL) {
+        fprintf(stderr, "Failed to open JSON file for writing: %s\n", json_path);
+        json_object_put(root);  // Free the JSON object
+        return;
+    }
+
+    fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
+    fclose(file);
+
+    // Free the root JSON object
+    json_object_put(root);
+}
 

@@ -17,12 +17,20 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH})
 # Find the FUSE package
 find_package(FUSE REQUIRED)
 
-# Include the header files from the 'include' directory
+# Find json-c library
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JSONC REQUIRED json-c)
+
+# Include directories for json-c
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${FUSE_INCLUDE_DIR})
+include_directories(${JSONC_INCLUDE_DIRS})
 
 # Add the source files located in the 'src' directory
 add_executable(fuse-example src/fuse-example.c src/device_manager.c)
 
-# Link FUSE libraries
-target_link_libraries(fuse-example ${FUSE_LIBRARIES})
+# Link libraries: FUSE and json-c
+target_link_libraries(fuse-example ${FUSE_LIBRARIES} ${JSONC_LIBRARIES})
+
+# Optional: If you are on a system where pkg-config cannot find json-c, you can manually link:
+# target_link_libraries(fuse-example ${FUSE_LIBRARIES} json-c)

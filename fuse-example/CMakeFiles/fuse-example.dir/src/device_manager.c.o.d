@@ -55,4 +55,15 @@ CMakeFiles/fuse-example.dir/src/device_manager.c.o: \
  /usr/include/strings.h /usr/include/time.h \
  /usr/include/x86_64-linux-gnu/bits/time.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h
+ /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+ /usr/include/json-c/json.h /usr/include/json-c/arraylist.h \
+ /usr/include/json-c/debug.h /usr/include/json-c/json_c_version.h \
+ /usr/include/json-c/json_object.h /usr/include/json-c/json_inttypes.h \
+ /usr/include/json-c/json_config.h /usr/include/inttypes.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+ /usr/include/json-c/json_types.h /usr/include/json-c/printbuf.h \
+ /usr/include/json-c/json_object_iterator.h \
+ /usr/include/json-c/json_pointer.h /usr/include/json-c/json_tokener.h \
+ /usr/include/json-c/json_util.h /usr/include/json-c/linkhash.h
