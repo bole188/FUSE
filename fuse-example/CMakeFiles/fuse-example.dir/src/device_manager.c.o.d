@@ -1,7 +1,7 @@
 CMakeFiles/fuse-example.dir/src/device_manager.c.o: \
  /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/src/device_manager.c \
  /usr/include/stdc-predef.h \
- /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/include/device_manager.h \
+ /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/inc/device_manager.h \
  /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \

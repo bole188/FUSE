@@ -22,7 +22,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(JSONC REQUIRED json-c)
 
 # Include directories for json-c
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc)
 include_directories(${FUSE_INCLUDE_DIR})
 include_directories(${JSONC_INCLUDE_DIRS})
 

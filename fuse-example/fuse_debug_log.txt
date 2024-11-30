@@ -1,0 +1,7 @@
+DEBUG: getattr failed, path not found: /Dir_1.12345.981000
+DEBUG: mkdir_callback called with path = /Dir_1.12345.981000, permissions = 755
+INFO: In add_dev func
+INFO: Error: File is not null
+INFO: Directory /Dir_1.12345.981000 created successfully and device added to JSON.
+DEBUG: Directory found: /Dir_1.12345.981000
+DEBUG: getattr for directory: /Dir_1.12345.981000

@@ -2,7 +2,9 @@
 #define MAX_STATS 100
 
 #include <libgen.h>
+#include <regex.h>
 #include <string.h>
+#include <ctype.h>
 #include <fuse.h>
 #include <unistd.h>
 #include <string.h>
@@ -17,9 +19,9 @@
 #include <mntent.h>
 
 static const char *log_file_path = "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/fuse_debug_log.txt";
+const char *json_path = "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/json_test_example.json";
 
-
-void log_debug(const char *message) {
+extern void log_debug(const char *message) {
     
     FILE *log_file = fopen(log_file_path, "a");
     
@@ -28,6 +30,13 @@ void log_debug(const char *message) {
         fclose(log_file);
     }
 }
+
+// Structure to hold parsed directory name components
+typedef struct {
+    char *name;
+    int serial_number;
+    char *imei;
+} ParsedInput;
 
 typedef struct {
     struct stat stat;
@@ -196,9 +205,6 @@ File *find_file(FileList *list, const char *name, const char *directory) {
     return NULL;
 }
 
-
-
-
 void free_file_list(FileList *list) {
     for (size_t i = 0; i < list->size; i++) {
         free(list->files[i]->name);
@@ -210,7 +216,6 @@ void free_file_list(FileList *list) {
     list->size = 0;
     list->capacity = 0;
 }
-
 
 int find_dir(const DirList *list, const char *dir_path) {
     for (size_t i = 0; i < list->size; i++) {
@@ -224,9 +229,6 @@ int find_dir(const DirList *list, const char *dir_path) {
     }
     return -1;
 }
-
-
-
 
 long calculate_file_size(const char *file_path) {
     FILE *file = fopen(file_path, "rb");  // Open the file in binary mode
@@ -254,7 +256,6 @@ long calculate_directory_size(const char *dir_path) {
 
     return total_size;
 }
-
 
 void add_dir(DirList *dir_list, const char *dir_path) {
     // Check if the directory already exists
@@ -289,13 +290,6 @@ void add_dir(DirList *dir_list, const char *dir_path) {
 
     dir_list->size++;
 }
-
-
-
-//=================================================================
-//=================================================================
-
-
 
 static int getattr_callback(const char *path, struct stat *stbuf) {
     memset(stbuf, 0, sizeof(struct stat));  // Clear the stat structure
@@ -357,8 +351,6 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     log_debug(log_message);
     return -ENOENT;
 }
-
-
 
 static int readdir_callback(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi) {
     (void) offset;
@@ -481,7 +473,6 @@ static int utimens_callback(const char *path, const struct timespec tv[2]) {
     return -ENOENT;
 }
 
-
 static int create_callback(const char *path, mode_t mode, struct fuse_file_info *fi) {
     (void) fi;  // Suppress unused variable warning
 
@@ -516,7 +507,6 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
     return 0;  // Success
 }
 
-
 /*static int read_callback(const char *path, char *buf, size_t size, off_t offset,
     struct fuse_file_info *fi) {
 
@@ -538,24 +528,111 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
   return -ENOENT;
 }*/
 
+static int validate_and_parse_mkdir_input(const char *dir_name, ParsedInput *parsed) {
+    regex_t regex;
+    const char *pattern = "^[a-zA-Z0-9_]+\\.[0-9]+\\.[0-9]+$";
+
+    // Compile the regex
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        log_debug("ERROR: Failed to compile regex.");
+        return -EINVAL;
+    }
+
+    // Check if the directory name matches the expected format
+    if (regexec(&regex, dir_name, 0, NULL, 0) != 0) {
+        log_debug("ERROR: Directory name format is invalid. Expected format: name.serial_number.imei");
+        regfree(&regex);
+        return -EINVAL;
+    }
+    regfree(&regex);
+
+    // Parse the directory name into components
+    char *name = strtok(strdup(dir_name), ".");
+    char *serial_number_str = strtok(NULL, ".");
+    char *imei_str = strtok(NULL, ".");
+
+    // Validate and parse serial_number and IMEI
+    if (!serial_number_str || !imei_str) {
+        log_debug("ERROR: Invalid directory name components.");
+        free(name);
+        return -EINVAL;
+    }
+
+    for (size_t i = 0; i < strlen(serial_number_str); i++) {
+        if (!isdigit(serial_number_str[i])) {
+            log_debug("ERROR: Serial number must be numeric.");
+            free(name);
+            return -EINVAL;
+        }
+    }
+
+    for (size_t i = 0; i < strlen(imei_str); i++) {
+        if (!isdigit(imei_str[i])) {
+            log_debug("ERROR: IMEI must be numeric.");
+            free(name);
+            return -EINVAL;
+        }
+    }
+
+    // Populate the parsed structure
+    parsed->name = name;
+    parsed->serial_number = atoi(serial_number_str);
+    parsed->imei = imei_str;
+
+    return 0;  // Success
+}
+
 static int mkdir_callback(const char *path, mode_t permission_bits) {
     char log_message[512];
     snprintf(log_message, sizeof(log_message), "DEBUG: mkdir_callback called with path = %s, permissions = %o", path, permission_bits);
     log_debug(log_message);
 
-    // Check if the directory already exists using find_dir()
-    if (find_dir(&dir_list, path) != -1) {
-        snprintf(log_message, sizeof(log_message), "DEBUG: Directory already exists: %s", path);
-        log_debug(log_message);
-        return -EEXIST;  // Return error if it already exists
+    // Ensure the directory is being created in the root directory
+    if (strchr(path + 1, '/') != NULL) {  // Check if there is more than one '/' in the path
+        log_debug("ERROR: Directories can only be created in the root.");
+        return -EPERM;  // Operation not permitted
     }
 
-    // Add the directory to our custom list
+    // Extract the directory name from the path
+    const char *dir_name = extract_directory_name(path);
+
+    // Validate and parse the directory name
+    ParsedInput parsed;
+    int validation_result = validate_and_parse_mkdir_input(dir_name, &parsed);
+    if (validation_result != 0) {
+        return validation_result;  // Return error code if validation fails
+    }
+
+    // Create the directory
+    if (find_dir(&dir_list, path) != -1) {
+        log_debug("ERROR: Directory already exists.");
+        free(parsed.name);
+        return -EEXIST;  // Directory already exists
+    }
     add_dir(&dir_list, path);
 
-    snprintf(log_message, sizeof(log_message), "DEBUG: Directory added successfully: %s", path);
+    // Create and add the device entry
+    time_t registration_date = time(NULL);
+    DeviceEntry *device = create_and_add_device_entry(
+        parsed.name, "TTConnectWave", parsed.serial_number, registration_date, parsed.imei, FOLDER_TYPE);
+
+    if (!device) {
+        log_debug("ERROR: Failed to create device entry.");
+        free(parsed.name);
+        return -ENOMEM;  // Out of memory
+    }
+
+    // Add the device to JSON
+    const char *parent_name = "/";  // Assuming parent_name is the root directory
+    add_device_to_json(device, json_path, parent_name);
+
+    snprintf(log_message, sizeof(log_message), "INFO: Directory %s created successfully and device added to JSON.", path);
     log_debug(log_message);
-    return 0;  // Success
+
+    // Free allocated memory
+    free(parsed.name);
+
+    return 0;
 }
 
 void remove_dir(DirList *list, size_t index) {
@@ -587,8 +664,6 @@ static int rmdir_callback(const char *path) {
     remove_dir(&dir_list, dir_index);  // Hypothetical function to remove the directory
     return 0;  // Success
 }
-
-
 
 static struct fuse_operations fuse_example_operations = {
   .getattr = getattr_callback,

@@ -31,12 +31,13 @@ extern int device_count;
 extern int device_capacity;
 
 // Function prototypes
+void log_debug(const char *message);
 void ensure_device_capacity();
 DeviceEntry *create_and_add_device_entry(const char *name, const char *model, 
                                  int serial_number, time_t registration_date, 
-                                 int imei, EntryType type);
-int is_valid_model(const char *model, EntryType type);
+                                 char* imei, EntryType type);
 void add_to_parent(struct json_object *current, const char *parent_name, struct json_object *device_json);
+int is_valid_model(const char *model, EntryType type);
 void add_device_to_json(DeviceEntry *device, const char *json_path, const char *parent_name);
 
 #endif // DEVICE_MANAGER_H
