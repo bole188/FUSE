@@ -11,13 +11,13 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <limits.h>
+#include <device_manager.h>
 #include <stdarg.h>
 #include <time.h>
 #include <mntent.h>
 
-static const char *filepath = "/file";
-static const char *filecontent = "I'm the content of the only file available there\n";
-static const char *log_file_path = "/home/boskobrankovic/RTOS/anadolu_fs/fuse-example/fuse_debug_log.txt";
+static const char *log_file_path = "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/fuse_debug_log.txt";
+device_count = 0;
 
 void log_debug(const char *message) {
     
@@ -402,7 +402,7 @@ static int readdir_callback(const char *path, void *buf, fuse_fill_dir_t filler,
     return 0;
 }
 
-static void init_callback(struct fuse_conn_info *conn) {
+static void* init_callback(struct fuse_conn_info *conn) {
     // Clear the log file by opening it in write mode
     FILE *log_file = fopen(log_file_path, "w");
     if (log_file) {
@@ -411,7 +411,7 @@ static void init_callback(struct fuse_conn_info *conn) {
         // Handle error if log file can't be cleared
         perror("Error clearing log file");
     }
-    
+    return NULL;
     // You can optionally log that the filesystem was mounted successfully
     log_debug("Filesystem mounted and log file cleared.");
 }
@@ -456,6 +456,19 @@ static int utimens_callback(const char *path, const struct timespec tv[2]) {
         // Update file timestamps
         file->stat.st_atime = tv ? tv[0].tv_sec : time(NULL);
         file->stat.st_mtime = tv ? tv[1].tv_sec : time(NULL);
+
+        int parent_dir_index = find_dir(&dir_list, parent_dir);
+        if (parent_dir_index != -1) {
+            // Set the parent directory's modification time to the current time
+            dir_list.stats[parent_dir_index].st_mtime = time(NULL);
+
+            snprintf(log_message, sizeof(log_message), "DEBUG: Updated modification time for parent directory: %s", parent_dir);
+            log_debug(log_message);
+        } else {
+            snprintf(log_message, sizeof(log_message), "DEBUG: Parent directory %s not found for updating timestamps", parent_dir);
+            log_debug(log_message);
+        }
+        
 
         snprintf(log_message, sizeof(log_message), "DEBUG: Updated timestamps for file: %s in directory: %s", file_name, parent_dir);
         log_debug(log_message);
@@ -504,7 +517,7 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
 }
 
 
-static int read_callback(const char *path, char *buf, size_t size, off_t offset,
+/*static int read_callback(const char *path, char *buf, size_t size, off_t offset,
     struct fuse_file_info *fi) {
 
   if (strcmp(path, filepath) == 0) {
@@ -523,7 +536,7 @@ static int read_callback(const char *path, char *buf, size_t size, off_t offset,
   }
 
   return -ENOENT;
-}
+}*/
 
 static int mkdir_callback(const char *path, mode_t permission_bits) {
     char log_message[512];
@@ -581,7 +594,7 @@ static struct fuse_operations fuse_example_operations = {
   .getattr = getattr_callback,
   .open = open_callback,
   .create = create_callback,
-  .read = read_callback,
+  //.read = read_callback,
   .readdir = readdir_callback,
   .init = init_callback,
   .mkdir = mkdir_callback,

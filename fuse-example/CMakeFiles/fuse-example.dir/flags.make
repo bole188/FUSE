@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = 
+C_INCLUDES = -I/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/include
 
 C_FLAGS =  -D_FILE_OFFSET_BITS=64 -g -Wall --pedantic -g
 

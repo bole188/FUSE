@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example
+CMAKE_SOURCE_DIR = /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example
+CMAKE_BINARY_DIR = /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/CMakeFiles /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/CMakeFiles /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -129,29 +129,53 @@ fuse-example/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fuse-example.dir/build.make CMakeFiles/fuse-example.dir/build
 .PHONY : fuse-example/fast
 
-fuse-example.o: fuse-example.c.o
-.PHONY : fuse-example.o
+src/device_manager.o: src/device_manager.c.o
+.PHONY : src/device_manager.o
 
 # target to build an object file
-fuse-example.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fuse-example.dir/build.make CMakeFiles/fuse-example.dir/fuse-example.c.o
-.PHONY : fuse-example.c.o
+src/device_manager.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fuse-example.dir/build.make CMakeFiles/fuse-example.dir/src/device_manager.c.o
+.PHONY : src/device_manager.c.o
 
-fuse-example.i: fuse-example.c.i
-.PHONY : fuse-example.i
+src/device_manager.i: src/device_manager.c.i
+.PHONY : src/device_manager.i
 
 # target to preprocess a source file
-fuse-example.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fuse-example.dir/build.make CMakeFiles/fuse-example.dir/fuse-example.c.i
-.PHONY : fuse-example.c.i
+src/device_manager.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fuse-example.dir/build.make CMakeFiles/fuse-example.dir/src/device_manager.c.i
+.PHONY : src/device_manager.c.i
 
-fuse-example.s: fuse-example.c.s
-.PHONY : fuse-example.s
+src/device_manager.s: src/device_manager.c.s
+.PHONY : src/device_manager.s
 
 # target to generate assembly for a file
-fuse-example.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fuse-example.dir/build.make CMakeFiles/fuse-example.dir/fuse-example.c.s
-.PHONY : fuse-example.c.s
+src/device_manager.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fuse-example.dir/build.make CMakeFiles/fuse-example.dir/src/device_manager.c.s
+.PHONY : src/device_manager.c.s
+
+src/fuse-example.o: src/fuse-example.c.o
+.PHONY : src/fuse-example.o
+
+# target to build an object file
+src/fuse-example.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fuse-example.dir/build.make CMakeFiles/fuse-example.dir/src/fuse-example.c.o
+.PHONY : src/fuse-example.c.o
+
+src/fuse-example.i: src/fuse-example.c.i
+.PHONY : src/fuse-example.i
+
+# target to preprocess a source file
+src/fuse-example.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fuse-example.dir/build.make CMakeFiles/fuse-example.dir/src/fuse-example.c.i
+.PHONY : src/fuse-example.c.i
+
+src/fuse-example.s: src/fuse-example.c.s
+.PHONY : src/fuse-example.s
+
+# target to generate assembly for a file
+src/fuse-example.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fuse-example.dir/build.make CMakeFiles/fuse-example.dir/src/fuse-example.c.s
+.PHONY : src/fuse-example.c.s
 
 # Help Target
 help:
@@ -162,9 +186,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... fuse-example"
-	@echo "... fuse-example.o"
-	@echo "... fuse-example.i"
-	@echo "... fuse-example.s"
+	@echo "... src/device_manager.o"
+	@echo "... src/device_manager.i"
+	@echo "... src/device_manager.s"
+	@echo "... src/fuse-example.o"
+	@echo "... src/fuse-example.i"
+	@echo "... src/fuse-example.s"
 .PHONY : help
 
 

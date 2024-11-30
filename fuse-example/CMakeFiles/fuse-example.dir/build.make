@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example
+CMAKE_SOURCE_DIR = /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example
+CMAKE_BINARY_DIR = /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example
 
 # Include any dependencies generated for this target.
 include CMakeFiles/fuse-example.dir/depend.make
@@ -69,32 +69,48 @@ include CMakeFiles/fuse-example.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/fuse-example.dir/flags.make
 
-CMakeFiles/fuse-example.dir/fuse-example.c.o: CMakeFiles/fuse-example.dir/flags.make
-CMakeFiles/fuse-example.dir/fuse-example.c.o: fuse-example.c
-CMakeFiles/fuse-example.dir/fuse-example.c.o: CMakeFiles/fuse-example.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/fuse-example.dir/fuse-example.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/fuse-example.dir/fuse-example.c.o -MF CMakeFiles/fuse-example.dir/fuse-example.c.o.d -o CMakeFiles/fuse-example.dir/fuse-example.c.o -c /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/fuse-example.c
+CMakeFiles/fuse-example.dir/src/fuse-example.c.o: CMakeFiles/fuse-example.dir/flags.make
+CMakeFiles/fuse-example.dir/src/fuse-example.c.o: src/fuse-example.c
+CMakeFiles/fuse-example.dir/src/fuse-example.c.o: CMakeFiles/fuse-example.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/fuse-example.dir/src/fuse-example.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/fuse-example.dir/src/fuse-example.c.o -MF CMakeFiles/fuse-example.dir/src/fuse-example.c.o.d -o CMakeFiles/fuse-example.dir/src/fuse-example.c.o -c /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/src/fuse-example.c
 
-CMakeFiles/fuse-example.dir/fuse-example.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/fuse-example.dir/fuse-example.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/fuse-example.c > CMakeFiles/fuse-example.dir/fuse-example.c.i
+CMakeFiles/fuse-example.dir/src/fuse-example.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/fuse-example.dir/src/fuse-example.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/src/fuse-example.c > CMakeFiles/fuse-example.dir/src/fuse-example.c.i
 
-CMakeFiles/fuse-example.dir/fuse-example.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/fuse-example.dir/fuse-example.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/fuse-example.c -o CMakeFiles/fuse-example.dir/fuse-example.c.s
+CMakeFiles/fuse-example.dir/src/fuse-example.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/fuse-example.dir/src/fuse-example.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/src/fuse-example.c -o CMakeFiles/fuse-example.dir/src/fuse-example.c.s
+
+CMakeFiles/fuse-example.dir/src/device_manager.c.o: CMakeFiles/fuse-example.dir/flags.make
+CMakeFiles/fuse-example.dir/src/device_manager.c.o: src/device_manager.c
+CMakeFiles/fuse-example.dir/src/device_manager.c.o: CMakeFiles/fuse-example.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/fuse-example.dir/src/device_manager.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/fuse-example.dir/src/device_manager.c.o -MF CMakeFiles/fuse-example.dir/src/device_manager.c.o.d -o CMakeFiles/fuse-example.dir/src/device_manager.c.o -c /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/src/device_manager.c
+
+CMakeFiles/fuse-example.dir/src/device_manager.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/fuse-example.dir/src/device_manager.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/src/device_manager.c > CMakeFiles/fuse-example.dir/src/device_manager.c.i
+
+CMakeFiles/fuse-example.dir/src/device_manager.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/fuse-example.dir/src/device_manager.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/src/device_manager.c -o CMakeFiles/fuse-example.dir/src/device_manager.c.s
 
 # Object files for target fuse-example
 fuse__example_OBJECTS = \
-"CMakeFiles/fuse-example.dir/fuse-example.c.o"
+"CMakeFiles/fuse-example.dir/src/fuse-example.c.o" \
+"CMakeFiles/fuse-example.dir/src/device_manager.c.o"
 
 # External object files for target fuse-example
 fuse__example_EXTERNAL_OBJECTS =
 
-bin/fuse-example: CMakeFiles/fuse-example.dir/fuse-example.c.o
+bin/fuse-example: CMakeFiles/fuse-example.dir/src/fuse-example.c.o
+bin/fuse-example: CMakeFiles/fuse-example.dir/src/device_manager.c.o
 bin/fuse-example: CMakeFiles/fuse-example.dir/build.make
 bin/fuse-example: /usr/lib/x86_64-linux-gnu/libfuse.so
 bin/fuse-example: CMakeFiles/fuse-example.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable bin/fuse-example"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable bin/fuse-example"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/fuse-example.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -106,6 +122,6 @@ CMakeFiles/fuse-example.dir/clean:
 .PHONY : CMakeFiles/fuse-example.dir/clean
 
 CMakeFiles/fuse-example.dir/depend:
-	cd /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/CMakeFiles/fuse-example.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/CMakeFiles/fuse-example.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/fuse-example.dir/depend
 

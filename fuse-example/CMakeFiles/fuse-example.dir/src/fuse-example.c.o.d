@@ -1,5 +1,5 @@
-CMakeFiles/fuse-example.dir/fuse-example.c.o: \
- /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/fuse-example.c \
+CMakeFiles/fuse-example.dir/src/fuse-example.c.o: \
+ /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/src/fuse-example.c \
  /usr/include/stdc-predef.h /usr/include/libgen.h /usr/include/features.h \
  /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -84,5 +84,6 @@ CMakeFiles/fuse-example.dir/fuse-example.c.o: \
  /usr/include/linux/limits.h \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
- /usr/include/x86_64-linux-gnu/bits/posix2_lim.h /usr/include/mntent.h \
- /usr/include/paths.h
+ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
+ /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/include/device_manager.h \
+ /usr/include/mntent.h /usr/include/paths.h

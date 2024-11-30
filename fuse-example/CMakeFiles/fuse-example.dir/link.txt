@@ -1,1 +1,1 @@
-/usr/bin/cc  -D_FILE_OFFSET_BITS=64 -g -Wall --pedantic -g -rdynamic CMakeFiles/fuse-example.dir/fuse-example.c.o -o bin/fuse-example  -lfuse 
+/usr/bin/cc  -D_FILE_OFFSET_BITS=64 -g -Wall --pedantic -g -rdynamic CMakeFiles/fuse-example.dir/src/fuse-example.c.o CMakeFiles/fuse-example.dir/src/device_manager.c.o -o bin/fuse-example  -lfuse 

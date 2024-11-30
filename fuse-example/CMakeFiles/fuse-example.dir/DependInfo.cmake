@@ -8,7 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/fuse-example.c" "CMakeFiles/fuse-example.dir/fuse-example.c.o" "gcc" "CMakeFiles/fuse-example.dir/fuse-example.c.o.d"
+  "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/src/device_manager.c" "CMakeFiles/fuse-example.dir/src/device_manager.c.o" "gcc" "CMakeFiles/fuse-example.dir/src/device_manager.c.o.d"
+  "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/src/fuse-example.c" "CMakeFiles/fuse-example.dir/src/fuse-example.c.o" "gcc" "CMakeFiles/fuse-example.dir/src/fuse-example.c.o.d"
   )
 
 # Targets to which this target links.

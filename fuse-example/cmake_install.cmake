@@ -1,4 +1,4 @@
-# Install script for directory: /home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example
+# Install script for directory: /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/boskobrankovic/RTOS/fuse.zadaca/my_fs_2/fuse-example/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
