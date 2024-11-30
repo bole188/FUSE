@@ -17,7 +17,7 @@
 #include <mntent.h>
 
 static const char *log_file_path = "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/fuse_debug_log.txt";
-device_count = 0;
+
 
 void log_debug(const char *message) {
     
@@ -612,7 +612,7 @@ int main(int argc, char *argv[])
   // Clean up resources before exiting
   free_file_list(&file_list);
   free_dir_list(&dir_list);
-
+  if(device_storage != NULL) free(device_storage);
   return result;
 
 }
