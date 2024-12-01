@@ -87,4 +87,12 @@ CMakeFiles/fuse-example.dir/src/fuse-example.c.o: \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
  /home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/inc/device_manager.h \
+ /usr/include/json-c/json.h /usr/include/json-c/arraylist.h \
+ /usr/include/json-c/debug.h /usr/include/json-c/json_c_version.h \
+ /usr/include/json-c/json_object.h /usr/include/json-c/json_inttypes.h \
+ /usr/include/json-c/json_config.h /usr/include/inttypes.h \
+ /usr/include/json-c/json_types.h /usr/include/json-c/printbuf.h \
+ /usr/include/json-c/json_object_iterator.h \
+ /usr/include/json-c/json_pointer.h /usr/include/json-c/json_tokener.h \
+ /usr/include/json-c/json_util.h /usr/include/json-c/linkhash.h \
  /usr/include/mntent.h /usr/include/paths.h

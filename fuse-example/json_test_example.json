@@ -1,2 +1,54 @@
 {
+  "devices":[
+    {
+      "Name":"dir1",
+      "Model":"TTConnectWave",
+      "SerialNumber":234,
+      "RegistrationDate":1733064454,
+      "IMEI":"   1111",
+      "Type":"Folder",
+      "Children":[
+      ]
+    },
+    {
+      "Name":"dir1",
+      "Model":"TTConnectWave",
+      "SerialNumber":111,
+      "RegistrationDate":1733064809,
+      "IMEI":" 203222",
+      "Type":"Folder",
+      "Children":[
+      ]
+    },
+    {
+      "Name":"dir1",
+      "Model":"TTConnectWave",
+      "SerialNumber":111,
+      "RegistrationDate":1733065020,
+      "IMEI":" 203222",
+      "Type":"Folder",
+      "Children":[
+      ]
+    },
+    {
+      "Name":"dir55",
+      "Model":"TTConnectWave",
+      "SerialNumber":120005,
+      "RegistrationDate":1733065043,
+      "IMEI":"    999",
+      "Type":"Folder",
+      "Children":[
+      ]
+    },
+    {
+      "Name":"dir9",
+      "Model":"TTConnectWave",
+      "SerialNumber":9,
+      "RegistrationDate":1733065191,
+      "IMEI":"    999",
+      "Type":"Folder",
+      "Children":[
+      ]
+    }
+  ]
 }

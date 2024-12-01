@@ -49,13 +49,7 @@ CMakeFiles/fuse-example.dir/src/device_manager.c.o: \
  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
- /usr/include/x86_64-linux-gnu/bits/stdio_lim.h /usr/include/string.h \
- /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
- /usr/include/strings.h /usr/include/time.h \
- /usr/include/x86_64-linux-gnu/bits/time.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/json-c/json.h /usr/include/json-c/arraylist.h \
  /usr/include/json-c/debug.h /usr/include/json-c/json_c_version.h \
  /usr/include/json-c/json_object.h /usr/include/json-c/json_inttypes.h \
@@ -66,4 +60,11 @@ CMakeFiles/fuse-example.dir/src/device_manager.c.o: \
  /usr/include/json-c/json_types.h /usr/include/json-c/printbuf.h \
  /usr/include/json-c/json_object_iterator.h \
  /usr/include/json-c/json_pointer.h /usr/include/json-c/json_tokener.h \
- /usr/include/json-c/json_util.h /usr/include/json-c/linkhash.h
+ /usr/include/json-c/json_util.h /usr/include/json-c/linkhash.h \
+ /usr/include/string.h \
+ /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+ /usr/include/strings.h /usr/include/time.h \
+ /usr/include/x86_64-linux-gnu/bits/time.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h

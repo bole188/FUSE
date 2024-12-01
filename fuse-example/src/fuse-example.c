@@ -295,9 +295,12 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     memset(stbuf, 0, sizeof(struct stat));  // Clear the stat structure
     char parent_dir[1024];
     char log_message[512];
+    char new_path[512];
+    const char *dir_name = extract_directory_name(path);
+    modify_path(path,dir_name,new_path);
 
     // Handle the root directory
-    if (strcmp(path, "/") == 0) {
+    if (strcmp(new_path, "/") == 0) {
         stbuf->st_mode = S_IFDIR | 0775;
         stbuf->st_nlink = 2;
         stbuf->st_uid = getuid();
@@ -309,30 +312,30 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     }
 
     // Check if the path is a directory
-    int dir_index = find_dir(&dir_list, path);
+    int dir_index = find_dir(&dir_list, new_path);
     if (dir_index != -1) {
         stbuf->st_mode = S_IFDIR | 0755;  // Set as a directory
         stbuf->st_nlink = 2;
-        stbuf->st_size = calculate_directory_size(path);  // Directory size
+        stbuf->st_size = calculate_directory_size(new_path);  // Directory size
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
         stbuf->st_atime = dir_list.stats[dir_index].st_atime;
         stbuf->st_mtime = dir_list.stats[dir_index].st_mtime;
         stbuf->st_ctime = dir_list.stats[dir_index].st_ctime;
 
-        snprintf(log_message, sizeof(log_message), "DEBUG: getattr for directory: %s", path);
+        snprintf(log_message, sizeof(log_message), "DEBUG: getattr for directory: %s", new_path);
         log_debug(log_message);
         return 0;
     }
 
     // Check if the path is a file
-    get_parent_directory(path, parent_dir);
-    const char *file_name = extract_directory_name(path);
+    get_parent_directory(new_path, parent_dir);
+    const char *file_name = extract_directory_name(new_path);
     File *file = find_file(&file_list, file_name, parent_dir);
 
     if (file) {
         stbuf->st_mode = S_IFREG | 0644;  // Set as a regular file
-        stbuf->st_size = calculate_file_size(path);
+        stbuf->st_size = calculate_file_size(new_path);
         stbuf->st_nlink = 1;
         stbuf->st_size = file->stat.st_size;  // File size
         stbuf->st_uid = getuid();
@@ -347,7 +350,7 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     }
 
     // If not found, return an error
-    snprintf(log_message, sizeof(log_message), "DEBUG: getattr failed, path not found: %s", path);
+    snprintf(log_message, sizeof(log_message), "DEBUG: getattr failed, new_path not found: %s", new_path);
     log_debug(log_message);
     return -ENOENT;
 }
@@ -582,6 +585,33 @@ static int validate_and_parse_mkdir_input(const char *dir_name, ParsedInput *par
     return 0;  // Success
 }
 
+void modify_path(const char *path, const char *directory_name, char *new_path) {
+    // Find the position of the last slash in the path to identify the directory part
+    const char *last_slash = strrchr(path, '/');
+
+    // Find the position of the first dot in the directory_name
+    const char *dot_pos = strchr(directory_name, '.');
+
+    // Extract the part of directory_name before the first dot
+    char modified_directory[256];  // Assuming the directory name is not too long
+    if (dot_pos != NULL) {
+        size_t len = dot_pos - directory_name;
+        strncpy(modified_directory, directory_name, len);
+        modified_directory[len] = '\0';  // Null-terminate the string
+    } else {
+        // If no dot, take the whole directory_name
+        strcpy(modified_directory, directory_name);
+    }
+
+    // Copy the original path up to the last slash, then append the modified directory name
+    size_t path_length = last_slash - path + 1;  // Include the last slash
+    strncpy(new_path, path, path_length);
+    new_path[path_length] = '\0';  // Null-terminate after the path
+
+    // Append the modified directory_name
+    strcat(new_path, modified_directory);
+}
+
 static int mkdir_callback(const char *path, mode_t permission_bits) {
     char log_message[512];
     snprintf(log_message, sizeof(log_message), "DEBUG: mkdir_callback called with path = %s, permissions = %o", path, permission_bits);
@@ -595,6 +625,11 @@ static int mkdir_callback(const char *path, mode_t permission_bits) {
 
     // Extract the directory name from the path
     const char *dir_name = extract_directory_name(path);
+    
+    char new_path[512];
+
+    modify_path(path, dir_name, new_path);
+
 
     // Validate and parse the directory name
     ParsedInput parsed;
@@ -604,12 +639,12 @@ static int mkdir_callback(const char *path, mode_t permission_bits) {
     }
 
     // Create the directory
-    if (find_dir(&dir_list, path) != -1) {
+    if (find_dir(&dir_list, new_path) != -1) {
         log_debug("ERROR: Directory already exists.");
         free(parsed.name);
         return -EEXIST;  // Directory already exists
     }
-    add_dir(&dir_list, path);
+    add_dir(&dir_list, new_path);
 
     // Create and add the device entry
     time_t registration_date = time(NULL);
@@ -626,7 +661,7 @@ static int mkdir_callback(const char *path, mode_t permission_bits) {
     const char *parent_name = "/";  // Assuming parent_name is the root directory
     add_device_to_json(device, json_path, parent_name);
 
-    snprintf(log_message, sizeof(log_message), "INFO: Directory %s created successfully and device added to JSON.", path);
+    snprintf(log_message, sizeof(log_message), "INFO: Directory %s created successfully and device added to JSON.", new_path);
     log_debug(log_message);
 
     // Free allocated memory
@@ -662,6 +697,8 @@ static int rmdir_callback(const char *path) {
 
     // Perform the deletion from DirList
     remove_dir(&dir_list, dir_index);  // Hypothetical function to remove the directory
+
+    remove_device_from_json(extract_directory_name(path),json_path);
     return 0;  // Success
 }
 

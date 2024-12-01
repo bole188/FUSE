@@ -120,71 +120,232 @@ void add_to_parent(struct json_object *current, const char *parent_name, struct 
 
 void add_device_to_json(DeviceEntry *device, const char *json_path, const char *parent_name) {
     char log_message[512];
+
     if (device == NULL || json_path == NULL || parent_name == NULL) {
-        snprintf(log_message, sizeof(log_message), "INFO: Error when adding the device to json file");
+        snprintf(log_message, sizeof(log_message), "ERROR: Invalid arguments passed to add_device_to_json.");
         log_debug(log_message);
         return;
     }
-    snprintf(log_message, sizeof(log_message), "INFO: In add_dev func");
+
+    snprintf(log_message, sizeof(log_message), "INFO: Entering add_device_to_json function.");
     log_debug(log_message);
-    // Load the existing JSON file
-    FILE *file = fopen(json_path, "r");
+
     struct json_object *root = NULL;
 
-    if (file != NULL) {
+    // Load the existing JSON file or create a new one with "Root"
+    FILE *file = fopen(json_path, "r");
+    if (file) {
         fseek(file, 0, SEEK_END);
-        size_t file_size = ftell(file);
+        size_t size = ftell(file);
         fseek(file, 0, SEEK_SET);
 
-        char *json_data = malloc(file_size + 1);
-        fread(json_data, 1, file_size, file);
-        json_data[file_size] = '\0';
+        char *data = malloc(size + 1);
+        if (data) {
+            fread(data, 1, size, file);
+            data[size] = '\0';
+            root = json_tokener_parse(data);
+            free(data);
+        }
         fclose(file);
+    }
 
-        root = json_tokener_parse(json_data);
-        free(json_data);
-        snprintf(log_message, sizeof(log_message), "INFO: Error: File is not null");
+    if (!root) {
+        // Initialize a new JSON structure with "devices"
+        root = json_object_new_object();
+        if (!root) {
+            snprintf(log_message, sizeof(log_message), "ERROR: Failed to initialize root JSON object.");
+            log_debug(log_message);
+            return;
+        }
+
+        struct json_object *devices_array = json_object_new_array();
+        if (!devices_array) {
+            snprintf(log_message, sizeof(log_message), "ERROR: Failed to initialize devices array.");
+            log_debug(log_message);
+            json_object_put(root);  // Clean up root if devices_array creation fails
+            return;
+        }
+
+        json_object_object_add(root, "devices", devices_array);
+
+        snprintf(log_message, sizeof(log_message), "INFO: Initialized new JSON structure with devices array.");
         log_debug(log_message);
     }
 
-    // If the JSON file doesn't exist or is empty, initialize a new root object
-    if (root == NULL) {
-        root = json_object_new_object();
+    // Retrieve the "devices" array
+    struct json_object *devices_array = NULL;
+    if (!json_object_object_get_ex(root, "devices", &devices_array)) {
+        devices_array = json_object_new_array();
+        if(!devices_array){
+            snprintf(log_message, sizeof(log_message), "ERROR: Failed to retrieve devices array from JSON.");
+            log_debug(log_message);
+            json_object_put(root);
+            return;
+        }
+        json_object_object_add(root, "devices", devices_array);
     }
 
-    // Recursive function to find the parent folder and add the device
-    
 
-    // Create the JSON object for the new device
+    // Create the JSON object for the device
     struct json_object *device_json = json_object_new_object();
     json_object_object_add(device_json, "Name", json_object_new_string(device->name));
     json_object_object_add(device_json, "Model", json_object_new_string(device->model));
     json_object_object_add(device_json, "SerialNumber", json_object_new_int(device->serial_number));
     json_object_object_add(device_json, "RegistrationDate", json_object_new_int64(device->registration_date));
     json_object_object_add(device_json, "IMEI", json_object_new_string(device->imei));
-    json_object_object_add(device_json, "Type",
-                           json_object_new_string(device->type == FOLDER_TYPE ? "Folder" : "File"));
 
-    // Only add "Children" if it's a folder
     if (device->type == FOLDER_TYPE) {
+        // Add a folder with an empty "Children" array
+        json_object_object_add(device_json, "Type", json_object_new_string("Folder"));
         json_object_object_add(device_json, "Children", json_object_new_array());
+        json_object_array_add(devices_array, device_json);
+
+        snprintf(log_message, sizeof(log_message), "INFO: Folder added to devices: %s", device->name);
+        log_debug(log_message);
+
+    } else if (device->type == FILE_TYPE) {
+        // Add a file to the "Children" array of the specified parent folder
+        snprintf(log_message, sizeof(log_message), "INFO: Adding file to parent folder: %s", parent_name);
+        log_debug(log_message);
+
+        for (int i = 0; i < json_object_array_length(devices_array); i++) {
+            struct json_object *folder = json_object_array_get_idx(devices_array, i);
+            struct json_object *folder_name = NULL;
+
+            if (json_object_object_get_ex(folder, "Name", &folder_name) &&
+                strcmp(json_object_get_string(folder_name), parent_name) == 0) {
+                struct json_object *children = NULL;
+
+                if (!json_object_object_get_ex(folder, "Children", &children)) {
+                    children = json_object_new_array();
+                    json_object_object_add(folder, "Children", children);
+                }
+
+                json_object_object_add(device_json, "Type", json_object_new_string("File"));
+                json_object_array_add(children, device_json);
+
+                snprintf(log_message, sizeof(log_message), "INFO: File added to folder: %s", parent_name);
+                log_debug(log_message);
+                break;
+            }
+        }
     }
 
-    // Add the device to the correct parent folder
-    add_to_parent(root, parent_name, device_json);
-
     // Save the updated JSON back to the file
-    file = fopen(json_path, "w+");
-    if (file == NULL) {
-        snprintf(log_message, sizeof(log_message), "INFO: Error: Failed to open json file for writing");
+    file = fopen(json_path, "w");
+    if (file) {
+        fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
+        fclose(file);
+        snprintf(log_message, sizeof(log_message), "INFO: JSON data written successfully to file.");
+        log_debug(log_message);
+    } else {
+        snprintf(log_message, sizeof(log_message), "ERROR: Failed to open JSON file for writing.");
+        log_debug(log_message);
+    }
+
+    json_object_put(root);
+}
+
+// Helper function to recursively remove a folder and its children
+int remove_folder_and_children(struct json_object *devices_array, const char *folder_name) {
+    for (int i = 0; i < json_object_array_length(devices_array); i++) {
+        struct json_object *device = json_object_array_get_idx(devices_array, i);
+        struct json_object *name_obj = NULL;
+
+        // Check if this is the folder we want to delete
+        if (json_object_object_get_ex(device, "Name", &name_obj) &&
+            strcmp(json_object_get_string(name_obj), folder_name) == 0) {
+
+            // Remove the folder from the array
+            json_object_array_del_idx(devices_array, i, 1);
+            return 1; // Folder deleted successfully
+        }
+
+        // Check if this is a folder and recursively search its children
+        struct json_object *type_obj = NULL;
+        struct json_object *children_obj = NULL;
+        if (json_object_object_get_ex(device, "Type", &type_obj) &&
+            strcmp(json_object_get_string(type_obj), "Folder") == 0 &&
+            json_object_object_get_ex(device, "Children", &children_obj)) {
+
+            // Recursively attempt to remove the folder from children
+            if (remove_folder_and_children(children_obj, folder_name)) {
+                return 1; // Folder deleted successfully
+            }
+        }
+    }
+    return 0; // Folder not found
+}
+
+
+void remove_device_from_json(const char *folder_name, const char *json_path) {
+    char log_message[512];
+
+    if (folder_name == NULL || json_path == NULL) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Invalid arguments passed to remove_device_from_json.");
         log_debug(log_message);
         return;
     }
 
-    fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
-    fclose(file);
+    snprintf(log_message, sizeof(log_message), "INFO: Entering remove_device_from_json function.");
+    log_debug(log_message);
 
-    // Free the root JSON object
+    struct json_object *root = NULL;
+
+    // Load the JSON file
+    FILE *file = fopen(json_path, "r");
+    if (file) {
+        fseek(file, 0, SEEK_END);
+        size_t size = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        char *data = malloc(size + 1);
+        if (data) {
+            fread(data, 1, size, file);
+            data[size] = '\0';
+            root = json_tokener_parse(data);
+            free(data);
+        }
+        fclose(file);
+    }
+
+    if (!root) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Failed to load JSON file.");
+        log_debug(log_message);
+        return;
+    }
+
+    // Retrieve the "devices" array
+    struct json_object *devices_array = NULL;
+    if (!json_object_object_get_ex(root, "devices", &devices_array)) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Failed to retrieve devices array from JSON.");
+        log_debug(log_message);
+        json_object_put(root);
+        return;
+    }
+
+    // Attempt to remove the folder and its children
+    if (!remove_folder_and_children(devices_array, folder_name)) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Folder '%s' not found in devices array.", folder_name);
+        log_debug(log_message);
+        json_object_put(root);
+        return;
+    }
+
+    snprintf(log_message, sizeof(log_message), "INFO: Folder '%s' removed successfully.", folder_name);
+    log_debug(log_message);
+
+    // Save the updated JSON back to the file
+    file = fopen(json_path, "w");
+    if (file) {
+        fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
+        fclose(file);
+        snprintf(log_message, sizeof(log_message), "INFO: JSON data written successfully to file.");
+        log_debug(log_message);
+    } else {
+        snprintf(log_message, sizeof(log_message), "ERROR: Failed to open JSON file for writing.");
+        log_debug(log_message);
+    }
+
     json_object_put(root);
 }
-

@@ -1,7 +1,29 @@
-DEBUG: getattr failed, path not found: /Dir_1.12345.981000
-DEBUG: mkdir_callback called with path = /Dir_1.12345.981000, permissions = 755
-INFO: In add_dev func
-INFO: Error: File is not null
-INFO: Directory /Dir_1.12345.981000 created successfully and device added to JSON.
-DEBUG: Directory found: /Dir_1.12345.981000
-DEBUG: getattr for directory: /Dir_1.12345.981000
+DEBUG: getattr failed, new_path not found: /dir991
+DEBUG: mkdir_callback called with path = /dir991.189.1389, permissions = 755
+INFO: Entering add_device_to_json function.
+INFO: Folder added to devices: dir991
+INFO: JSON data written successfully to file.
+INFO: Directory /dir991 created successfully and device added to JSON.
+DEBUG: Directory found: /dir991
+DEBUG: getattr for directory: /dir991
+DEBUG: readdir_callback called with path = /
+DEBUG: Parent_dir: / and path: /
+DEBUG: Listed directory: dir991
+DEBUG: Directory found: /dir991
+DEBUG: getattr for directory: /dir991
+DEBUG: readdir_callback called with path = /
+DEBUG: Parent_dir: / and path: /
+DEBUG: Listed directory: dir991
+DEBUG: Directory found: /dir991
+DEBUG: getattr for directory: /dir991
+DEBUG: Directory found: /dir991
+DEBUG: getattr for directory: /dir991
+DEBUG: readdir_callback called with path = /dir991
+DEBUG: Parent_dir: / and path: /dir991
+DEBUG: Directory found: /dir991
+DEBUG: getattr for directory: /dir991
+DEBUG: Directory found: /dir991
+INFO: Entering remove_device_from_json function.
+INFO: Folder 'dir991' removed successfully.
+INFO: JSON data written successfully to file.
+DEBUG: readdir_callback called with path = /

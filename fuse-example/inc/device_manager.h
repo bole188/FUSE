@@ -5,6 +5,7 @@
 #define INITIAL_CAPACITY 10
 #include <stdlib.h>
 #include <stdio.h>
+#include<json-c/json.h>
 #include <string.h>
 #include <time.h>
 
