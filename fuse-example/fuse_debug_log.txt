@@ -1,29 +1,69 @@
-DEBUG: getattr failed, new_path not found: /dir991
-DEBUG: mkdir_callback called with path = /dir991.189.1389, permissions = 755
+DEBUG: getattr failed, new_path not found: /Dir_1
+DEBUG: mkdir_callback called with path = /Dir_1.1234.9982, permissions = 755
 INFO: Entering add_device_to_json function.
-INFO: Folder added to devices: dir991
+INFO: Folder added to devices: Dir_1
 INFO: JSON data written successfully to file.
-INFO: Directory /dir991 created successfully and device added to JSON.
-DEBUG: Directory found: /dir991
-DEBUG: getattr for directory: /dir991
+INFO: Directory /Dir_1 created successfully and device added to JSON.
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
 DEBUG: readdir_callback called with path = /
 DEBUG: Parent_dir: / and path: /
-DEBUG: Listed directory: dir991
-DEBUG: Directory found: /dir991
-DEBUG: getattr for directory: /dir991
-DEBUG: readdir_callback called with path = /
-DEBUG: Parent_dir: / and path: /
-DEBUG: Listed directory: dir991
-DEBUG: Directory found: /dir991
-DEBUG: getattr for directory: /dir991
-DEBUG: Directory found: /dir991
-DEBUG: getattr for directory: /dir991
-DEBUG: readdir_callback called with path = /dir991
-DEBUG: Parent_dir: / and path: /dir991
-DEBUG: Directory found: /dir991
-DEBUG: getattr for directory: /dir991
-DEBUG: Directory found: /dir991
+DEBUG: Listed directory: Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: getattr failed, new_path not found: /Dir_1/FIle1
+DEBUG: Parent directory is /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: Added file: FIle1 in directory: /Dir_1
+DEBUG: File created successfully: FIle1 in directory: /Dir_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: FIle1 in directory: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: Updated modification time for parent directory: /Dir_1
+DEBUG: Updated timestamps for file: FIle1 in directory: /Dir_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: FIle1 in directory: /Dir_1
+DEBUG: getattr for file: FIle1 in directory: /Dir_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: FIle1 in directory: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: Updated modification time for parent directory: /Dir_1
+DEBUG: Updated timestamps for file: FIle1 in directory: /Dir_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: FIle1 in directory: /Dir_1
+DEBUG: getattr for file: FIle1 in directory: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+DEBUG: readdir_callback called with path = /Dir_1
+DEBUG: Parent_dir: / and path: /Dir_1
+DEBUG: Listed file: FIle1 in directory: /Dir_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: FIle1 in directory: /Dir_1
+DEBUG: getattr for file: FIle1 in directory: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+DEBUG: readdir_callback called with path = /Dir_1
+DEBUG: Parent_dir: / and path: /Dir_1
+DEBUG: Listed file: FIle1 in directory: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: FIle1 in directory: /Dir_1
+DEBUG: getattr for file: FIle1 in directory: /Dir_1
+DEBUG: unlink_callback called with path = /Dir_1/FIle1
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: FIle1 in directory: /Dir_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: FIle1 in directory: /Dir_1
+INFO: Removing file: FIle1 from directory: /Dir_1
+INFO: File successfully removed: FIle1
 INFO: Entering remove_device_from_json function.
-INFO: Folder 'dir991' removed successfully.
-INFO: JSON data written successfully to file.
-DEBUG: readdir_callback called with path = /
+ERROR: Folder 'FIle1' not found in devices array.
+INFO: File successfully unlinked: /Dir_1/FIle1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+DEBUG: readdir_callback called with path = /Dir_1
+DEBUG: Parent_dir: / and path: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1

@@ -118,6 +118,7 @@ void add_file(FileList *list, const char *name, char *directory) {
 }
 
 
+
 const char *extract_directory_name(const char *path) {
     // Find the last slash in the path
     const char *last_slash = strrchr(path, '/');
@@ -129,31 +130,6 @@ const char *extract_directory_name(const char *path) {
     return last_slash + 1;
 }
 
-
-char* slice_up_to_substring(const char* firstString, const char* secondString) {
-    // Find the position of secondString in firstString
-    char* position = strstr(firstString, secondString);
-    
-    // If secondString is not found, return NULL
-    if (position == NULL) {
-        return NULL;
-    }
-    
-    // Calculate the length of the substring we want to extract
-    int length = position - firstString;
-    
-    // Allocate memory for the new string (+1 for null terminator)
-    char* result = (char*)malloc(length + 1);
-    if (result == NULL) {
-        return NULL; // Memory allocation failed
-    }
-    
-    // Copy the relevant portion of firstString to result
-    strncpy(result, firstString, length);
-    result[length] = '\0'; // Null-terminate the string
-    
-    return result;
-}
 
 
 void get_parent_directory(const char *path, char *parent) {
@@ -476,6 +452,7 @@ static int utimens_callback(const char *path, const struct timespec tv[2]) {
     return -ENOENT;
 }
 
+
 static int create_callback(const char *path, mode_t mode, struct fuse_file_info *fi) {
     (void) fi;  // Suppress unused variable warning
 
@@ -496,6 +473,7 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
 
     // Add the new file to the file list
     add_file(&file_list, file_name, parent_dir);
+    
 
     // Optionally, set additional attributes if required (e.g., permissions)
     char log_message[512];
@@ -584,6 +562,8 @@ static int validate_and_parse_mkdir_input(const char *dir_name, ParsedInput *par
 
     return 0;  // Success
 }
+
+
 
 void modify_path(const char *path, const char *directory_name, char *new_path) {
     // Find the position of the last slash in the path to identify the directory part
@@ -702,6 +682,87 @@ static int rmdir_callback(const char *path) {
     return 0;  // Success
 }
 
+void remove_file(FileList *file_list, const char *path) {
+    char log_message[512];
+
+    // Extract the parent directory
+    char parent_dir[512];
+    get_parent_directory(path, parent_dir);
+
+    // Extract the file name
+    const char *file_name = strrchr(path, '/');
+    if (!file_name) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Invalid path format: %s", path);
+        log_debug(log_message);
+        return;
+    }
+    file_name++;  // Move past the slash to get the file name
+
+    // Use find_file to locate the file in the list
+    File *file = find_file(file_list, file_name, parent_dir);
+    if (!file) {
+        snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
+        log_debug(log_message);
+        return;
+    }
+
+    // Log the removal
+    snprintf(log_message, sizeof(log_message), "INFO: Removing file: %s from directory: %s", file_name, parent_dir);
+    log_debug(log_message);
+
+    // Remove the file from the list
+    for (size_t i = 0; i < file_list->size; i++) {
+        if (file_list->files[i] == file) {
+            // Free the file's resources
+            free(file->name);
+            free(file->directory);
+            free(file);
+
+            // Shift remaining files to fill the gap
+            for (size_t j = i; j < file_list->size - 1; j++) {
+                file_list->files[j] = file_list->files[j + 1];
+            }
+
+            // Decrease the file_list size
+            file_list->size--;
+
+            // Log success
+            snprintf(log_message, sizeof(log_message), "INFO: File successfully removed: %s", file_name);
+            log_debug(log_message);
+            return;
+        }
+    }
+}
+
+
+static int unlink_callback(const char *path) {
+    char log_message[512];
+
+    snprintf(log_message, sizeof(log_message), "DEBUG: unlink_callback called with path = %s", path);
+    log_debug(log_message);
+
+    // Check if the file exists in the FileList
+    char parent_dir[1024];
+    get_parent_directory(path, parent_dir);
+    const char *file_name = extract_directory_name(path);
+
+    if (find_file(&file_list, file_name, parent_dir) == NULL) {
+        snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
+        log_debug(log_message);
+        return -ENOENT;  // File not found
+    }
+
+    // Remove the file from the FileList and update the parent directory size
+    remove_file(&file_list, path);
+    remove_device_from_json(extract_directory_name(path),json_path);
+
+    snprintf(log_message, sizeof(log_message), "INFO: File successfully unlinked: %s", path);
+    log_debug(log_message);
+
+    return 0;  // Success
+}
+
+
 static struct fuse_operations fuse_example_operations = {
   .getattr = getattr_callback,
   .open = open_callback,
@@ -712,6 +773,7 @@ static struct fuse_operations fuse_example_operations = {
   .mkdir = mkdir_callback,
   .utimens = utimens_callback,
   .rmdir = rmdir_callback,
+  .unlink = unlink_callback
 };
 
 int main(int argc, char *argv[])

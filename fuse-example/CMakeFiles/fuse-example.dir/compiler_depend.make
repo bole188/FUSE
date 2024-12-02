@@ -56,14 +56,6 @@ CMakeFiles/fuse-example.dir/src/device_manager.c.o: src/device_manager.c \
   /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
   /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/string.h \
-  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
-  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
-  /usr/include/strings.h \
-  /usr/include/time.h \
-  /usr/include/x86_64-linux-gnu/bits/time.h \
-  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
-  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
   /usr/include/json-c/json.h \
   /usr/include/json-c/arraylist.h \
   /usr/include/json-c/debug.h \
@@ -82,7 +74,15 @@ CMakeFiles/fuse-example.dir/src/device_manager.c.o: src/device_manager.c \
   /usr/include/json-c/json_pointer.h \
   /usr/include/json-c/json_tokener.h \
   /usr/include/json-c/json_util.h \
-  /usr/include/json-c/linkhash.h
+  /usr/include/json-c/linkhash.h \
+  /usr/include/string.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/strings.h \
+  /usr/include/time.h \
+  /usr/include/x86_64-linux-gnu/bits/time.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h
 
 CMakeFiles/fuse-example.dir/src/fuse-example.c.o: src/fuse-example.c \
   /usr/include/stdc-predef.h \
@@ -128,6 +128,7 @@ CMakeFiles/fuse-example.dir/src/fuse-example.c.o: src/fuse-example.c \
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
   /usr/include/strings.h \
+  /usr/include/ctype.h \
   /usr/include/fuse.h \
   /usr/include/fuse/fuse.h \
   /usr/include/fuse/fuse_common.h \
@@ -191,6 +192,21 @@ CMakeFiles/fuse-example.dir/src/fuse-example.c.o: src/fuse-example.c \
   /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
   /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
   inc/device_manager.h \
+  /usr/include/json-c/json.h \
+  /usr/include/json-c/arraylist.h \
+  /usr/include/json-c/debug.h \
+  /usr/include/json-c/json_c_version.h \
+  /usr/include/json-c/json_object.h \
+  /usr/include/json-c/json_inttypes.h \
+  /usr/include/json-c/json_config.h \
+  /usr/include/inttypes.h \
+  /usr/include/json-c/json_types.h \
+  /usr/include/json-c/printbuf.h \
+  /usr/include/json-c/json_object_iterator.h \
+  /usr/include/json-c/json_pointer.h \
+  /usr/include/json-c/json_tokener.h \
+  /usr/include/json-c/json_util.h \
+  /usr/include/json-c/linkhash.h \
   /usr/include/mntent.h \
   /usr/include/paths.h
 
@@ -257,6 +273,12 @@ CMakeFiles/fuse-example.dir/src/fuse-example.c.o: src/fuse-example.c \
 
 src/fuse-example.c:
 
+/usr/include/time.h:
+
+/usr/include/strings.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
+
 /usr/include/json-c/json_object_iterator.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
@@ -271,9 +293,9 @@ src/fuse-example.c:
 
 /usr/include/json-c/json_object.h:
 
-/usr/include/json-c/debug.h:
+/usr/include/string.h:
 
-/usr/include/time.h:
+/usr/include/x86_64-linux-gnu/bits/endian.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
 
@@ -299,8 +321,6 @@ src/fuse-example.c:
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
-/usr/include/strings.h:
-
 /usr/include/json-c/json_pointer.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn.h:
@@ -309,17 +329,13 @@ src/fuse-example.c:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
-/usr/include/json-c/json_c_version.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
-
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/stdc-predef.h:
 
-/usr/include/json-c/printbuf.h:
-
 /usr/include/x86_64-linux-gnu/bits/time.h:
+
+/usr/include/json-c/printbuf.h:
 
 src/device_manager.c:
 
@@ -339,8 +355,6 @@ src/device_manager.c:
 
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
-
 /usr/include/inttypes.h:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs.h:
@@ -352,6 +366,10 @@ src/device_manager.c:
 /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
 
 /usr/include/features-time64.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
+
+/usr/include/json-c/json_c_version.h:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
 
@@ -377,15 +395,13 @@ src/device_manager.c:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
+/usr/include/ctype.h:
+
 /usr/include/json-c/arraylist.h:
 
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/endian.h:
-
-/usr/include/string.h:
 
 /usr/include/x86_64-linux-gnu/bits/environments.h:
 
@@ -431,6 +447,14 @@ inc/device_manager.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
 
+/usr/include/json-c/debug.h:
+
+/usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
+
+/usr/include/stdio.h:
+
 /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h:
 
 /usr/include/utime.h:
@@ -438,9 +462,3 @@ inc/device_manager.h:
 /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
-
-/usr/include/stdio.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:

@@ -89,33 +89,7 @@ DeviceEntry *create_and_add_device_entry(const char *name, const char *model,
     return entry;
 }
 
-void add_to_parent(struct json_object *current, const char *parent_name, struct json_object *device_json) {
-    struct json_object *name_field = NULL;
-    // Check if the current object matches the parent folder
-    if (json_object_object_get_ex(current, "Name", &name_field) &&
-        strcmp(json_object_get_string(name_field), parent_name) == 0) {
 
-        // Ensure the current object has a "Children" array
-        struct json_object *children_array = NULL;
-        if (!json_object_object_get_ex(current, "Children", &children_array)) {
-            children_array = json_object_new_array();
-            json_object_object_add(current, "Children", children_array);
-        }
-
-        // Add the new device to the "Children" array
-        json_object_array_add(children_array, device_json);
-        return;
-    }
-    // Recursively search in the "Children" array
-    struct json_object *children_array = NULL;
-    if (json_object_object_get_ex(current, "Children", &children_array)) {
-        int child_count = json_object_array_length(children_array);
-        for (int i = 0; i < child_count; i++) {
-            struct json_object *child = json_object_array_get_idx(children_array, i);
-            add_to_parent(child, parent_name, device_json);
-        }
-    }
-}
 
 
 void add_device_to_json(DeviceEntry *device, const char *json_path, const char *parent_name) {
