@@ -234,6 +234,33 @@ long calculate_directory_size(const char *dir_path) {
     return total_size;
 }
 
+void modify_path(const char *path, const char *directory_name, char *new_path) {
+    // Find the position of the last slash in the path to identify the directory part
+    const char *last_slash = strrchr(path, '/');
+
+    // Find the position of the first dot in the directory_name
+    const char *dot_pos = strchr(directory_name, '.');
+
+    // Extract the part of directory_name before the first dot
+    char modified_directory[256];  // Assuming the directory name is not too long
+    if (dot_pos != NULL) {
+        size_t len = dot_pos - directory_name;
+        strncpy(modified_directory, directory_name, len);
+        modified_directory[len] = '\0';  // Null-terminate the string
+    } else {
+        // If no dot, take the whole directory_name
+        strcpy(modified_directory, directory_name);
+    }
+
+    // Copy the original path up to the last slash, then append the modified directory name
+    size_t path_length = last_slash - path + 1;  // Include the last slash
+    strncpy(new_path, path, path_length);
+    new_path[path_length] = '\0';  // Null-terminate after the path
+
+    // Append the modified directory_name
+    strcat(new_path, modified_directory);
+}
+
 void add_dir(DirList *dir_list, const char *dir_path) {
     // Check if the directory already exists
     for (size_t i = 0; i < dir_list->size; i++) {
@@ -278,15 +305,44 @@ void extract_model(const char *input, char *output) {
     // Tokenize the string using '.' as the delimiter
     char *token1 = strtok(temp, ".");
     char *token2 = strtok(NULL, ".");
-
+    char log_message[512];
+    snprintf(log_message,sizeof(log_message),"%s and %s tokens.",token1,token2);
+    log_debug(log_message);
     strncpy(output, token2, strlen(token2) + 1);
+}
+
+void get_substring_up_to_char(const char *input, char *output, char delimiter) {
+    if (input == NULL || output == NULL) {
+        fprintf(stderr, "ERROR: Null input or output provided.\n");
+        return;
+    }
+
+    // Find the last occurrence of the delimiter in the input string
+    const char *delimiter_pos = strrchr(input, delimiter);
+    
+    if (delimiter_pos != NULL) {
+        // Copy the part of the string up to the delimiter
+        size_t length = delimiter_pos - input;
+        strncpy(output, input, length);
+        output[length] = '\0';  // Null-terminate the substring
+    } else {
+        // If delimiter is not found, copy the whole string
+        strcpy(output, input);
+    }
+}
+
+void modify_path_to_remove_serial(const char *input_path, char *output_path) {
+    char log_message[256];
+    get_substring_up_to_char(input_path,output_path,'.');
+    snprintf(log_message,sizeof(log_message),"Output path in modify path to remove subs: %s",output_path);
+    log_debug(log_message);
 }
 
 static int getattr_callback(const char *path, struct stat *stbuf) {
     memset(stbuf, 0, sizeof(struct stat));  // Clear the stat structure
     char parent_dir[1024];
     char log_message[512];
-    char new_path[512];
+    char* new_path = (char*)calloc(100,sizeof(char));
     const char *dir_name = extract_directory_name(path);
     modify_path(path,dir_name,new_path);
 
@@ -320,13 +376,19 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     }
 
     // Check if the path is a file
-    get_parent_directory(new_path, parent_dir);
-    const char *file_name = extract_directory_name(new_path);
+    char* secondary_path = (char*)calloc(100,sizeof(char));
+    modify_path_to_remove_serial(path,secondary_path);
+    get_parent_directory(secondary_path, parent_dir);
+
+    const char *file_name = extract_directory_name(secondary_path);
     File *file = find_file(&file_list, file_name, parent_dir);
+
+    snprintf(log_message, sizeof(log_message), "DEBUG: Secondary path: %s and first path: %s.", secondary_path,path);
+    log_debug(log_message);
 
     if (file) {
         stbuf->st_mode = S_IFREG | 0644;  // Set as a regular file
-        stbuf->st_size = calculate_file_size(new_path);
+        stbuf->st_size = calculate_file_size(secondary_path);
         stbuf->st_nlink = 1;
         stbuf->st_size = file->stat.st_size;  // File size
         stbuf->st_uid = getuid();
@@ -341,7 +403,7 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     }
 
     // If not found, return an error
-    snprintf(log_message, sizeof(log_message), "DEBUG: getattr failed, new_path not found: %s", new_path);
+    snprintf(log_message, sizeof(log_message), "DEBUG: getattr failed, new_path not found: %s nor secondary_path has been found %s.", new_path,secondary_path);
     log_debug(log_message);
     return -ENOENT;
 }
@@ -419,19 +481,23 @@ static int open_callback(const char *path, struct fuse_file_info *fi) {
 }
 
 static int utimens_callback(const char *path, const struct timespec tv[2]) {
-    char parent_dir[1024];
-    get_parent_directory(path, parent_dir);
-    const char *file_name = extract_directory_name(path);
     char log_message[512];
+    snprintf(log_message, sizeof(log_message), "DEBUG: Utimens callback called with %s as path.", path);
+    char* secondary_path = (char*)calloc(100,sizeof(char));
+    modify_path_to_remove_serial(path,secondary_path);
+    log_debug(log_message);
+    char parent_dir[1024];
+    get_parent_directory(secondary_path, parent_dir);
+    const char *file_name = extract_directory_name(secondary_path);
 
     // Check if the target is a directory
-    int dir_index = find_dir(&dir_list, path);
+    int dir_index = find_dir(&dir_list, secondary_path);
     if (dir_index != -1) {
         // Update directory timestamps
         dir_list.stats[dir_index].st_atime = tv ? tv[0].tv_sec : time(NULL);
         dir_list.stats[dir_index].st_mtime = tv ? tv[1].tv_sec : time(NULL);
 
-        snprintf(log_message, sizeof(log_message), "DEBUG: Updated timestamps for directory: %s", path);
+        snprintf(log_message, sizeof(log_message), "DEBUG: Updated timestamps for directory: %s", secondary_path);
         log_debug(log_message);
         return 0;
     }
@@ -462,55 +528,9 @@ static int utimens_callback(const char *path, const struct timespec tv[2]) {
     }
 
     // If neither file nor directory is found, return an error
-    snprintf(log_message, sizeof(log_message), "DEBUG: Timestamps update failed: %s not found", path);
+    snprintf(log_message, sizeof(log_message), "DEBUG: Timestamps update failed: %s not found", secondary_path);
     log_debug(log_message);
     return -ENOENT;
-}
-
-
-void modify_path_to_remove_serial(const char *input_path, char *output_path) {
-    char log_message[512];
-    if (input_path == NULL || output_path == NULL) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Null input or output provided.");
-        log_debug(log_message);
-        return;
-    }
-
-    // Find the last occurrence of '/'
-    const char *last_slash = strrchr(input_path, '/');
-    const char *file_name = (last_slash != NULL) ? last_slash + 1 : input_path;
-
-    // Find the last occurrence of '.'
-    char *last_dot = strrchr(file_name, '.');
-    if (last_dot == NULL) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Invalid format. Expected a file name with multiple dots.");
-        log_debug(log_message);
-        return;
-    }
-
-    // Find the second last occurrence of '.'
-    char *second_last_dot = NULL;
-    for (char *ptr = file_name; ptr < last_dot; ptr++) {
-        if (*ptr == '.') {
-            second_last_dot = ptr;
-        }
-    }
-
-    if (second_last_dot == NULL) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Invalid format. Expected a file name with multiple dots.");
-        log_debug(log_message);
-        return;
-    }
-
-    // Copy the input path up to the second last dot
-    size_t prefix_length = (second_last_dot - input_path) + 1; // Include the second dot
-    strncpy(output_path, input_path, prefix_length);
-    output_path[prefix_length] = '\0';
-
-    // Append the remaining path if the input has directory components
-    if (last_slash != NULL) {
-        strcat(output_path, last_slash + 1);
-    }
 }
 
 
@@ -518,7 +538,7 @@ int check_restrictions(const char *input, const char *parent_directory, ParsedIn
     char log_message[512];
 
     regex_t regex;
-    const char *pattern = "^[a-zA-Z0-9_]+\.[a-zA-Z0-9_-]+\.[0-9]+$";
+    const char *pattern = "^[a-zA-Z0-9_]+\\.[a-zA-Z0-9_-]+\\.[0-9]+$";
 
     // Compile the regex
     if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
@@ -586,7 +606,7 @@ int check_restrictions(const char *input, const char *parent_directory, ParsedIn
     free(copy);
     parsed_input->name = string1;
     parsed_input->model = string2;
-    parsed_input->serial_number = string3;
+    parsed_input->serial_number = atoi(string3);
     parsed_input->imei = NULL;
     return 1;
 }
@@ -613,6 +633,9 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
 
     const char* real_file_name = extract_directory_name(real_path);
 
+    snprintf(log_message, sizeof(log_message), "DEBUG: Real path: %s", real_path);
+    log_debug(log_message);
+
     // Check if the file already exists in the FileList
     if (find_file(&file_list, real_file_name, parent_dir) != NULL) {
         return -EEXIST;  // File already exists
@@ -628,13 +651,13 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
     
 
     // Optionally, set additional attributes if required (e.g., permissions)
-    snprintf(log_message, sizeof(log_message), "DEBUG: File created successfully: %s in directory: %s", file_name, parent_dir);
+    snprintf(log_message, sizeof(log_message), "DEBUG: File created successfully: %s in directory: %s", real_file_name, parent_dir);
     log_debug(log_message);
 
     struct timespec ts[2];
     clock_gettime(CLOCK_REALTIME, &ts[0]);  // Current time for atime
     ts[1] = ts[0];  // Same time for mtime
-    utimens_callback(real_path, ts);
+    //utimens_callback(real_path, ts);
 
     return 0;  // Success
 }
@@ -662,7 +685,7 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
 
 static int validate_and_parse_mkdir_input(const char *dir_name, ParsedInput *parsed) {
     regex_t regex;
-    const char *pattern = "^[a-zA-Z0-9_]+\.[a-zA-Z0-9_-]+\.[0-9]+$";
+    const char *pattern = "^[a-zA-Z0-9_]+\\.[a-zA-Z0-9_-]+\\.[0-9]+$";
 
     // Compile the regex
     if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
@@ -715,34 +738,6 @@ static int validate_and_parse_mkdir_input(const char *dir_name, ParsedInput *par
     return 0;  // Success
 }
 
-
-
-void modify_path(const char *path, const char *directory_name, char *new_path) {
-    // Find the position of the last slash in the path to identify the directory part
-    const char *last_slash = strrchr(path, '/');
-
-    // Find the position of the first dot in the directory_name
-    const char *dot_pos = strchr(directory_name, '.');
-
-    // Extract the part of directory_name before the first dot
-    char modified_directory[256];  // Assuming the directory name is not too long
-    if (dot_pos != NULL) {
-        size_t len = dot_pos - directory_name;
-        strncpy(modified_directory, directory_name, len);
-        modified_directory[len] = '\0';  // Null-terminate the string
-    } else {
-        // If no dot, take the whole directory_name
-        strcpy(modified_directory, directory_name);
-    }
-
-    // Copy the original path up to the last slash, then append the modified directory name
-    size_t path_length = last_slash - path + 1;  // Include the last slash
-    strncpy(new_path, path, path_length);
-    new_path[path_length] = '\0';  // Null-terminate after the path
-
-    // Append the modified directory_name
-    strcat(new_path, modified_directory);
-}
 
 static int mkdir_callback(const char *path, mode_t permission_bits) {
     char log_message[512];
@@ -828,7 +823,7 @@ static int rmdir_callback(const char *path) {
     }
 
     // Perform the deletion from DirList
-    remove_dir(&dir_list, dir_index);  // Hypothetical function to remove the directory
+    remove_dir(&dir_list, dir_index);
 
     remove_device_from_json(extract_directory_name(path),json_path);
     return 0;  // Success
@@ -904,7 +899,6 @@ static int unlink_callback(const char *path) {
         return -ENOENT;  // File not found
     }
 
-    // Remove the file from the FileList and update the parent directory size
     remove_file(&file_list, path);
     remove_device_from_json(extract_directory_name(path),json_path);
 

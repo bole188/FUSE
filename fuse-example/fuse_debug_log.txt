@@ -1,0 +1,81 @@
+/Dir_1.1234
+DEBUG: Secondary path: /Dir_1.1234 and first path: /Dir_1.1234.9982.
+DEBUG: getattr failed, new_path not found: /Dir_1 nor secondary_path has been found /Dir_1.1234.
+DEBUG: mkdir_callback called with path = /Dir_1.1234.9982, permissions = 755
+INFO: Entering add_device_to_json function.
+INFO: Folder added to devices: Dir_1
+INFO: JSON data written successfully to file.
+INFO: Directory /Dir_1 created successfully and device added to JSON.
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+DEBUG: readdir_callback called with path = /
+DEBUG: Parent_dir: / and path: /
+DEBUG: Listed directory: Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+/Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: Secondary path: /Dir_1/File_1.HY-TTC_60 and first path: /Dir_1/File_1.HY-TTC_60.12345.
+DEBUG: getattr failed, new_path not found: /Dir_1/File_1 nor secondary_path has been found /Dir_1/File_1.HY-TTC_60.
+DEBUG: Parent directory is /Dir_1
+/Dir_1/File_1.HY-TTC_60
+DEBUG: Real path: /Dir_1/File_1.HY-TTC_60
+DEBUG: Directory found: /Dir_1
+DEBUG: Added file: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: File created successfully: File_1.HY-TTC_60 in directory: /Dir_1
+/Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: Secondary path: /Dir_1/File_1.HY-TTC_60 and first path: /Dir_1/File_1.HY-TTC_60.12345.
+DEBUG: getattr for file: File_1.HY-TTC_60 in directory: /Dir_1
+/Dir_1/File_1.HY-TTC_60
+DEBUG: Utimens callback called with /Dir_1/File_1.HY-TTC_60.12345 as path.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: Updated modification time for parent directory: /Dir_1
+DEBUG: Updated timestamps for file: File_1.HY-TTC_60 in directory: /Dir_1
+/Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: Secondary path: /Dir_1/File_1.HY-TTC_60 and first path: /Dir_1/File_1.HY-TTC_60.12345.
+DEBUG: getattr for file: File_1.HY-TTC_60 in directory: /Dir_1
+
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+DEBUG: readdir_callback called with path = /Dir_1
+DEBUG: Parent_dir: / and path: /Dir_1
+DEBUG: Listed file: File_1.HY-TTC_60 in directory: /Dir_1
+/Dir_1/File_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: Secondary path: /Dir_1/File_1 and first path: /Dir_1/File_1.HY-TTC_60.
+DEBUG: getattr failed, new_path not found: /Dir_1/File_1 nor secondary_path has been found /Dir_1/File_1.
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+/
+DEBUG: Secondary path: / and first path: /.git/HEAD.
+DEBUG: getattr failed, new_path not found: /.git/HEAD nor secondary_path has been found /.
+DEBUG: readdir_callback called with path = /
+DEBUG: Parent_dir: / and path: /
+DEBUG: Listed directory: Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+/Dir_1/
+DEBUG: Parent directory is /Dir_1
+DEBUG: Secondary path: /Dir_1/ and first path: /Dir_1/.git.
+DEBUG: getattr failed, new_path not found: /Dir_1/ nor secondary_path has been found /Dir_1/.
+/Dir_1/
+DEBUG: Parent directory is /Dir_1
+DEBUG: Secondary path: /Dir_1/ and first path: /Dir_1/.git.
+DEBUG: getattr failed, new_path not found: /Dir_1/ nor secondary_path has been found /Dir_1/.
+DEBUG: readdir_callback called with path = /Dir_1
+DEBUG: Parent_dir: / and path: /Dir_1
+DEBUG: Listed file: File_1.HY-TTC_60 in directory: /Dir_1
+/Dir_1/File_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: Secondary path: /Dir_1/File_1 and first path: /Dir_1/File_1.HY-TTC_60.
+DEBUG: getattr failed, new_path not found: /Dir_1/File_1 nor secondary_path has been found /Dir_1/File_1.
+/Dir_1/
+DEBUG: Parent directory is /Dir_1
+DEBUG: Secondary path: /Dir_1/ and first path: /Dir_1/.gitignore.
+DEBUG: getattr failed, new_path not found: /Dir_1/ nor secondary_path has been found /Dir_1/.
