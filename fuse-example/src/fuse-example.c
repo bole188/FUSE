@@ -36,6 +36,7 @@ typedef struct {
     char *name;
     int serial_number;
     char *imei;
+    char *model;
 } ParsedInput;
 
 typedef struct {
@@ -267,6 +268,20 @@ void add_dir(DirList *dir_list, const char *dir_path) {
     dir_list->size++;
 }
 
+void extract_model(const char *input, char *output) {
+
+    // Copy the input string to a temporary buffer to tokenize
+    char temp[256];
+    strncpy(temp, input, sizeof(temp) - 1);
+    temp[sizeof(temp) - 1] = '\0';  // Ensure null-termination
+
+    // Tokenize the string using '.' as the delimiter
+    char *token1 = strtok(temp, ".");
+    char *token2 = strtok(NULL, ".");
+
+    strncpy(output, token2, strlen(token2) + 1);
+}
+
 static int getattr_callback(const char *path, struct stat *stbuf) {
     memset(stbuf, 0, sizeof(struct stat));  // Clear the stat structure
     char parent_dir[1024];
@@ -453,16 +468,153 @@ static int utimens_callback(const char *path, const struct timespec tv[2]) {
 }
 
 
+void modify_path_to_remove_serial(const char *input_path, char *output_path) {
+    char log_message[512];
+    if (input_path == NULL || output_path == NULL) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Null input or output provided.");
+        log_debug(log_message);
+        return;
+    }
+
+    // Find the last occurrence of '/'
+    const char *last_slash = strrchr(input_path, '/');
+    const char *file_name = (last_slash != NULL) ? last_slash + 1 : input_path;
+
+    // Find the last occurrence of '.'
+    char *last_dot = strrchr(file_name, '.');
+    if (last_dot == NULL) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Invalid format. Expected a file name with multiple dots.");
+        log_debug(log_message);
+        return;
+    }
+
+    // Find the second last occurrence of '.'
+    char *second_last_dot = NULL;
+    for (char *ptr = file_name; ptr < last_dot; ptr++) {
+        if (*ptr == '.') {
+            second_last_dot = ptr;
+        }
+    }
+
+    if (second_last_dot == NULL) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Invalid format. Expected a file name with multiple dots.");
+        log_debug(log_message);
+        return;
+    }
+
+    // Copy the input path up to the second last dot
+    size_t prefix_length = (second_last_dot - input_path) + 1; // Include the second dot
+    strncpy(output_path, input_path, prefix_length);
+    output_path[prefix_length] = '\0';
+
+    // Append the remaining path if the input has directory components
+    if (last_slash != NULL) {
+        strcat(output_path, last_slash + 1);
+    }
+}
+
+
+int check_restrictions(const char *input, const char *parent_directory, ParsedInput* parsed_input) {
+    char log_message[512];
+
+    regex_t regex;
+    const char *pattern = "^[a-zA-Z0-9_]+\.[a-zA-Z0-9_-]+\.[0-9]+$";
+
+    // Compile the regex
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        log_debug("ERROR: Failed to compile regex.");
+        return -EINVAL;
+    }
+
+    // Check if the directory name matches the expected format
+    if (regexec(&regex, input, 0, NULL, 0) != 0) {
+        log_debug("ERROR: File name format is invalid. Expected format: name.model.serial_number");
+        regfree(&regex);
+        return -EINVAL;
+    }
+    regfree(&regex);
+
+    if (input == NULL || parent_directory == NULL) {
+        snprintf(log_message,sizeof(log_message),"At least one of the parameters is null.");
+        log_debug(log_message);
+        return 0;
+    }
+
+    char *copy = strdup(input);
+    if (!copy) {
+        snprintf(log_message,sizeof(log_message),"ERROR: Memory allocation failed for input copy.");
+        log_debug(log_message);
+        return 0;
+    }
+
+    char *string1 = strtok(copy, ".");
+    char *string2 = strtok(NULL, ".");
+    char *string3 = strtok(NULL, ".");
+
+    if (string1 == NULL || string2 == NULL || string3 == NULL || strtok(NULL, ".") != NULL) {
+        snprintf(log_message,sizeof(log_message),"ERROR: Input format is invalid. Expected format: string1.string2.string3.");
+        log_debug(log_message);
+        free(copy);
+        return 0;
+    }
+
+    // Validate string2 as a model
+    if (!is_valid_model(string2, FILE_TYPE)) {
+        snprintf(log_message,sizeof(log_message),"ERROR: Invalid model specified, %s.",string2);
+        log_debug(log_message);
+        free(copy);
+        return 0;
+    }
+
+    // Validate parent directory is not the root
+    if (strcmp(parent_directory, "/") == 0) {
+        snprintf(log_message,sizeof(log_message),"ERROR: Files cannot be created in the root directory.");
+        log_debug(log_message);
+        free(copy);
+        return 0;
+    }
+
+    // Ensure string3 is a numeric serial number
+    for (size_t i = 0; i < strlen(string3); i++) {
+        if (!isdigit(string3[i])) {
+            snprintf(log_message,sizeof(log_message),"ERROR: Serial number must be numeric: %s\n", string3);
+            log_debug(log_message);
+            free(copy);
+            return 0;
+        }
+    }
+    free(copy);
+    parsed_input->name = string1;
+    parsed_input->model = string2;
+    parsed_input->serial_number = string3;
+    parsed_input->imei = NULL;
+    return 1;
+}
+
 static int create_callback(const char *path, mode_t mode, struct fuse_file_info *fi) {
     (void) fi;  // Suppress unused variable warning
 
-    // Extract the parent directory and file name from the path
+    char log_message[512];
+
     char parent_dir[1024];
     get_parent_directory(path, parent_dir);
     const char *file_name = extract_directory_name(path);
+    ParsedInput parsed_input;
+
+    if(!check_restrictions(file_name,parent_dir,&parsed_input)){
+        snprintf(log_message,sizeof(log_message),"ERROR: Restrictions not set.");
+        log_debug(log_message);
+        return -EXIT_FAILURE;
+    }
+
+    char real_path[256];
+
+    modify_path_to_remove_serial(path,real_path);
+
+    const char* real_file_name = extract_directory_name(real_path);
 
     // Check if the file already exists in the FileList
-    if (find_file(&file_list, file_name, parent_dir) != NULL) {
+    if (find_file(&file_list, real_file_name, parent_dir) != NULL) {
         return -EEXIST;  // File already exists
     }
 
@@ -472,18 +624,17 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
     }
 
     // Add the new file to the file list
-    add_file(&file_list, file_name, parent_dir);
+    add_file(&file_list, real_file_name, parent_dir);
     
 
     // Optionally, set additional attributes if required (e.g., permissions)
-    char log_message[512];
     snprintf(log_message, sizeof(log_message), "DEBUG: File created successfully: %s in directory: %s", file_name, parent_dir);
     log_debug(log_message);
 
     struct timespec ts[2];
     clock_gettime(CLOCK_REALTIME, &ts[0]);  // Current time for atime
     ts[1] = ts[0];  // Same time for mtime
-    utimens_callback(path, ts);
+    utimens_callback(real_path, ts);
 
     return 0;  // Success
 }
@@ -511,7 +662,7 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
 
 static int validate_and_parse_mkdir_input(const char *dir_name, ParsedInput *parsed) {
     regex_t regex;
-    const char *pattern = "^[a-zA-Z0-9_]+\\.[0-9]+\\.[0-9]+$";
+    const char *pattern = "^[a-zA-Z0-9_]+\.[a-zA-Z0-9_-]+\.[0-9]+$";
 
     // Compile the regex
     if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
@@ -559,6 +710,7 @@ static int validate_and_parse_mkdir_input(const char *dir_name, ParsedInput *par
     parsed->name = name;
     parsed->serial_number = atoi(serial_number_str);
     parsed->imei = imei_str;
+    parsed->model = NULL;
 
     return 0;  // Success
 }

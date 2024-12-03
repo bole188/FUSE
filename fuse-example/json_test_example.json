@@ -19,6 +19,46 @@
       "Type":"Folder",
       "Children":[
       ]
+    },
+    {
+      "Name":"Dir_1",
+      "Model":"TTConnectWave",
+      "SerialNumber":1234,
+      "RegistrationDate":1733229737,
+      "IMEI":"    009",
+      "Type":"Folder",
+      "Children":[
+      ]
+    },
+    {
+      "Name":"Dir_1",
+      "Model":"TTConnectWave",
+      "SerialNumber":1234,
+      "RegistrationDate":1733229829,
+      "IMEI":"    988",
+      "Type":"Folder",
+      "Children":[
+      ]
+    },
+    {
+      "Name":"Dir_1",
+      "Model":"TTConnectWave",
+      "SerialNumber":1223,
+      "RegistrationDate":1733230315,
+      "IMEI":"   5422",
+      "Type":"Folder",
+      "Children":[
+      ]
+    },
+    {
+      "Name":"Dir_1",
+      "Model":"TTConnectWave",
+      "SerialNumber":1223,
+      "RegistrationDate":1733230549,
+      "IMEI":"   5422",
+      "Type":"Folder",
+      "Children":[
+      ]
     }
   ]
 }
