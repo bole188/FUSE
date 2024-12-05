@@ -1,10 +1,10 @@
 {
   "devices":[
     {
-      "Name":"Dir_1",
+      "Name":"Dir_2",
       "Model":"TTConnectWave",
       "SerialNumber":1234,
-      "RegistrationDate":1733408306,
+      "RegistrationDate":1733414662,
       "IMEI":"   9982",
       "Type":"Folder",
       "Children":[

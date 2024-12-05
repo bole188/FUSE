@@ -54,7 +54,6 @@ DeviceEntry *create_and_add_device_entry(const char *name, const char *model,
                                          char* imei, EntryType type) {
     // Ensure there is enough space in the device storage
     ensure_device_capacity();
-
     // Validate the model
     if (!is_valid_model(model, type)) {
         fprintf(stderr, "Invalid model type: %s\n", model);
