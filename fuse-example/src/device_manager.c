@@ -76,7 +76,6 @@ DeviceEntry *create_and_add_device_entry(const char *name, const char *model,
     entry->serial_number = serial_number;
     entry->registration_date = registration_date;
     snprintf(entry->imei,sizeof(imei),"%7s", imei); // Format IMEI as a 7-character string
-
     // Generate a random system ID
     entry->system_id = rand();
 
@@ -166,10 +165,9 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
     json_object_object_add(device_json, "Model", json_object_new_string(device->model));
     json_object_object_add(device_json, "SerialNumber", json_object_new_int(device->serial_number));
     json_object_object_add(device_json, "RegistrationDate", json_object_new_int64(device->registration_date));
-    json_object_object_add(device_json, "IMEI", json_object_new_string(device->imei));
-
     if (device->type == FOLDER_TYPE) {
         // Add a folder with an empty "Children" array
+        json_object_object_add(device_json, "IMEI", json_object_new_string(device->imei));
         json_object_object_add(device_json, "Type", json_object_new_string("Folder"));
         json_object_object_add(device_json, "Children", json_object_new_array());
         json_object_array_add(devices_array, device_json);
@@ -185,7 +183,9 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
         for (int i = 0; i < json_object_array_length(devices_array); i++) {
             struct json_object *folder = json_object_array_get_idx(devices_array, i);
             struct json_object *folder_name = NULL;
-
+            json_object_object_get_ex(folder, "Name", &folder_name);
+            snprintf(log_message, sizeof(log_message), "INFO: Folder name: %s, and parent name: %s.", json_object_get_string(folder_name),parent_name);
+            log_debug(log_message);
             if (json_object_object_get_ex(folder, "Name", &folder_name) &&
                 strcmp(json_object_get_string(folder_name), parent_name) == 0) {
                 struct json_object *children = NULL;

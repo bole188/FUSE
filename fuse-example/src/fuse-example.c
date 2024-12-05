@@ -474,7 +474,7 @@ static void* init_callback(struct fuse_conn_info *conn) {
     if (log_file) {
         fclose(log_file);  // Just open and close to clear the file content
     }
-    File *json_file = fopen(json_path,"w");
+    FILE *json_file = fopen(json_path,"w");
     if (json_file) {
         fclose(json_file);  // Just open and close to clear the file content
     }
@@ -622,11 +622,13 @@ int check_restrictions(const char *input, const char *parent_directory, ParsedIn
             return 0;
         }
     }
-    free(copy);
-    parsed_input->name = string1;
-    parsed_input->model = string2;
+    parsed_input->name = strdup(string1);
+    parsed_input->model = strdup(string2);
     parsed_input->serial_number = atoi(string3);
-    parsed_input->imei = NULL;
+    parsed_input->imei = "";
+    snprintf(log_message,sizeof(log_message),"INFO: %s, %s, %s, %s.", string1,string2,string3,parsed_input->imei);
+    log_debug(log_message);
+    free(copy);
     return 1;
 }
 
@@ -634,7 +636,7 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
     (void) fi;  // Suppress unused variable warning
 
     char log_message[512];
-
+    time_t registration_date = time(NULL);
     char parent_dir[1024];
     get_parent_directory(path, parent_dir);
     const char *file_name = extract_directory_name(path);
@@ -664,10 +666,15 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
     if (find_dir(&dir_list, parent_dir) == -1) {
         return -ENOENT;  // Parent directory does not exist
     }
-
+    DeviceEntry *device = create_and_add_device_entry(
+        parsed_input.name, parsed_input.model, parsed_input.serial_number, registration_date, parsed_input.imei, FILE_TYPE);
     // Add the new file to the file list
+    if(device == NULL){
+        snprintf(log_message, sizeof(log_message), "DEBUG: Device is null.");
+        log_debug(log_message);
+    }
     add_file(&file_list, real_file_name, parent_dir);
-    
+    add_device_to_json(device, json_path, extract_directory_name(parent_dir));
 
     // Optionally, set additional attributes if required (e.g., permissions)
     snprintf(log_message, sizeof(log_message), "DEBUG: File created successfully: %s in directory: %s", real_file_name, parent_dir);
