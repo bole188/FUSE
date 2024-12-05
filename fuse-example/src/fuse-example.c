@@ -195,10 +195,12 @@ void free_file_list(FileList *list) {
 }
 
 int find_dir(const DirList *list, const char *dir_path) {
+    char log_message[512];
     for (size_t i = 0; i < list->size; i++) {
+        snprintf(log_message, sizeof(log_message), "DEBUG: Directory: %s, and dir_path: %s", list->dirs[i],dir_path);
+        log_debug(log_message);
         if (strcmp(list->dirs[i], dir_path) == 0) {
             // Debug: Found the directory
-            char log_message[512];
             snprintf(log_message, sizeof(log_message), "DEBUG: Directory found: %s", dir_path);
             log_debug(log_message);
             return i;
@@ -338,16 +340,25 @@ void modify_path_to_remove_serial(const char *input_path, char *output_path) {
     log_debug(log_message);
 }
 
+void count_dots(const char* string,int* return_result){
+    for(int i = 0;i<strlen(string);i++){
+        if(string[i] == '.')    (*return_result)++;
+    }
+}
+
 static int getattr_callback(const char *path, struct stat *stbuf) {
-    memset(stbuf, 0, sizeof(struct stat));  // Clear the stat structure
-    char parent_dir[1024];
     char log_message[512];
-    char* new_path = (char*)calloc(100,sizeof(char));
-    const char *dir_name = extract_directory_name(path);
-    modify_path(path,dir_name,new_path);
+    snprintf(log_message, sizeof(log_message), "DEBUG: Getattr callback called with path: %s.", path);
+    log_debug(log_message);
+    memset(stbuf, 0, sizeof(struct stat));  // Clear the stat structure
+    int dot_counter = 0;
+
+    count_dots(extract_directory_name(path),&dot_counter);
+
+    char parent_dir[1024];
 
     // Handle the root directory
-    if (strcmp(new_path, "/") == 0) {
+    if (strcmp(path, "/") == 0) {
         stbuf->st_mode = S_IFDIR | 0775;
         stbuf->st_nlink = 2;
         stbuf->st_uid = getuid();
@@ -357,9 +368,17 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_ctime = time(NULL);
         return 0;
     }
-
+    
+    char* new_path = strdup(path);
+    const char *dir_name = extract_directory_name(path);
+    
     // Check if the path is a directory
+    if(dot_counter == 2){
+        modify_path(path,dir_name,new_path);
+    }
+    
     int dir_index = find_dir(&dir_list, new_path);
+
     if (dir_index != -1) {
         stbuf->st_mode = S_IFDIR | 0755;  // Set as a directory
         stbuf->st_nlink = 2;
@@ -376,15 +395,14 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     }
 
     // Check if the path is a file
-    char* secondary_path = (char*)calloc(100,sizeof(char));
-    modify_path_to_remove_serial(path,secondary_path);
+    char* secondary_path = strdup(path);
+    if(dot_counter == 2){
+        modify_path_to_remove_serial(path,secondary_path);
+    }
     get_parent_directory(secondary_path, parent_dir);
 
     const char *file_name = extract_directory_name(secondary_path);
     File *file = find_file(&file_list, file_name, parent_dir);
-
-    snprintf(log_message, sizeof(log_message), "DEBUG: Secondary path: %s and first path: %s.", secondary_path,path);
-    log_debug(log_message);
 
     if (file) {
         stbuf->st_mode = S_IFREG | 0644;  // Set as a regular file
@@ -455,13 +473,14 @@ static void* init_callback(struct fuse_conn_info *conn) {
     FILE *log_file = fopen(log_file_path, "w");
     if (log_file) {
         fclose(log_file);  // Just open and close to clear the file content
-    } else {
-        // Handle error if log file can't be cleared
-        perror("Error clearing log file");
     }
-    return NULL;
+    File *json_file = fopen(json_path,"w");
+    if (json_file) {
+        fclose(json_file);  // Just open and close to clear the file content
+    }
     // You can optionally log that the filesystem was mounted successfully
-    log_debug("Filesystem mounted and log file cleared.");
+    log_debug("Filesystem mounted and log file cleared && json file cleared.");
+    return NULL;
 }
 
 static int open_callback(const char *path, struct fuse_file_info *fi) {
