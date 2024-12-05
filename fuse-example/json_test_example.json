@@ -4,17 +4,10 @@
       "Name":"Dir_1",
       "Model":"TTConnectWave",
       "SerialNumber":1234,
-      "RegistrationDate":1733395242,
+      "RegistrationDate":1733408306,
       "IMEI":"   9982",
       "Type":"Folder",
       "Children":[
-        {
-          "Name":"File_1",
-          "Model":"ACTUATOR",
-          "SerialNumber":1234,
-          "RegistrationDate":1733395244,
-          "Type":"File"
-        }
       ]
     }
   ]

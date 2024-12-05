@@ -252,10 +252,10 @@ int remove_folder_and_children(struct json_object *devices_array, const char *fo
 }
 
 
-void remove_device_from_json(const char *folder_name, const char *json_path) {
+void remove_device_from_json(const char *device_name, const char *json_path) {
     char log_message[512];
 
-    if (folder_name == NULL || json_path == NULL) {
+    if (device_name == NULL || json_path == NULL) {
         snprintf(log_message, sizeof(log_message), "ERROR: Invalid arguments passed to remove_device_from_json.");
         log_debug(log_message);
         return;
@@ -298,15 +298,66 @@ void remove_device_from_json(const char *folder_name, const char *json_path) {
         return;
     }
 
-    // Attempt to remove the folder and its children
-    if (!remove_folder_and_children(devices_array, folder_name)) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Folder '%s' not found in devices array.", folder_name);
+    
+
+    // Iterate over devices to check if it is a child file
+    for (int i = 0; i < json_object_array_length(devices_array); i++) {
+        struct json_object *device = json_object_array_get_idx(devices_array, i);
+        struct json_object *children = NULL;
+        struct json_object *type = NULL;
+        
+        if (json_object_object_get_ex(device, "Type", &type) &&
+            strcmp(json_object_get_string(type), "Folder") == 0 &&
+            json_object_object_get_ex(device, "Children", &children)) {
+
+            snprintf(log_message, sizeof(log_message), "Inside the if condition.");
+            log_debug(log_message);
+
+            for (int j = 0; j < json_object_array_length(children); j++) {
+                struct json_object *child = json_object_array_get_idx(children, j);
+                struct json_object *child_name = NULL;
+
+                json_object_object_get_ex(child, "Name", &child_name);
+                snprintf(log_message, sizeof(log_message), "%d: Child name: %s, device name: %s.",i,json_object_get_string(child_name),device_name);
+                log_debug(log_message);
+
+
+                if (json_object_object_get_ex(child, "Name", &child_name) &&
+                    strcmp(json_object_get_string(child_name), device_name) == 0) {
+                    // Remove the child file from the folder
+                    json_object_array_del_idx(children, j, 1);
+
+                    snprintf(log_message, sizeof(log_message), "INFO: File '%s' removed successfully.", device_name);
+                    log_debug(log_message);
+
+                    // Save the updated JSON back to the file
+                    file = fopen(json_path, "w");
+                    if (file) {
+                        fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
+                        fclose(file);
+                        snprintf(log_message, sizeof(log_message), "INFO: JSON data written successfully to file.");
+                        log_debug(log_message);
+                    } else {
+                        snprintf(log_message, sizeof(log_message), "ERROR: Failed to open JSON file for writing.");
+                        log_debug(log_message);
+                    }
+
+                    json_object_put(root);
+                    return;
+                }
+            }
+        }
+    }
+
+    // If not a file, attempt to remove it as a folder
+    if (!remove_folder_and_children(devices_array, device_name)) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Device '%s' not found in devices array.", device_name);
         log_debug(log_message);
         json_object_put(root);
         return;
     }
 
-    snprintf(log_message, sizeof(log_message), "INFO: Folder '%s' removed successfully.", folder_name);
+    snprintf(log_message, sizeof(log_message), "INFO: Folder '%s' removed successfully.", device_name);
     log_debug(log_message);
 
     // Save the updated JSON back to the file
@@ -323,3 +374,4 @@ void remove_device_from_json(const char *folder_name, const char *json_path) {
 
     json_object_put(root);
 }
+

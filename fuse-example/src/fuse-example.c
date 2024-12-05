@@ -314,10 +314,6 @@ void extract_model(const char *input, char *output) {
 }
 
 void get_substring_up_to_char(const char *input, char *output, char delimiter) {
-    if (input == NULL || output == NULL) {
-        fprintf(stderr, "ERROR: Null input or output provided.\n");
-        return;
-    }
 
     // Find the last occurrence of the delimiter in the input string
     const char *delimiter_pos = strrchr(input, delimiter);
@@ -917,7 +913,7 @@ static int unlink_callback(const char *path) {
     // Check if the file exists in the FileList
     char parent_dir[1024];
     get_parent_directory(path, parent_dir);
-    const char *file_name = extract_directory_name(path);
+    char *file_name = extract_directory_name(path);
 
     if (find_file(&file_list, file_name, parent_dir) == NULL) {
         snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
@@ -926,11 +922,15 @@ static int unlink_callback(const char *path) {
     }
 
     remove_file(&file_list, path);
-    remove_device_from_json(extract_directory_name(path),json_path);
+
+    char* real_file_name = (char*)calloc(20,sizeof(char));
+    get_substring_up_to_char(file_name,real_file_name,'.');    
+
+    remove_device_from_json(real_file_name,json_path);
 
     snprintf(log_message, sizeof(log_message), "INFO: File successfully unlinked: %s", path);
     log_debug(log_message);
-
+    free(real_file_name);
     return 0;  // Success
 }
 

@@ -33,6 +33,7 @@ extern int device_capacity;
 
 // Function prototypes
 void log_debug(const char *message);
+void count_dots(const char* path , int* return_result);
 void ensure_device_capacity();
 DeviceEntry *create_and_add_device_entry(const char *name, const char *model, 
                                  int serial_number, time_t registration_date, 

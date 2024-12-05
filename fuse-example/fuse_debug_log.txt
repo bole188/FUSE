@@ -61,30 +61,40 @@ DEBUG: Getattr callback called with path: /Dir_1.
 DEBUG: Directory: /Dir_1, and dir_path: /Dir_1
 DEBUG: Directory found: /Dir_1
 DEBUG: getattr for directory: /Dir_1
-DEBUG: Getattr callback called with path: /Dir_1/.git.
-DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/.git
-DEBUG: Parent directory is /Dir_1
-DEBUG: getattr failed, new_path not found: /Dir_1/.git nor secondary_path has been found /Dir_1/.git.
-DEBUG: Getattr callback called with path: /Dir_1/.git.
-DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/.git
-DEBUG: Parent directory is /Dir_1
-DEBUG: getattr failed, new_path not found: /Dir_1/.git nor secondary_path has been found /Dir_1/.git.
-DEBUG: Getattr callback called with path: /Dir_1/HEAD.
-DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/HEAD
-DEBUG: Parent directory is /Dir_1
-DEBUG: getattr failed, new_path not found: /Dir_1/HEAD nor secondary_path has been found /Dir_1/HEAD.
-DEBUG: Getattr callback called with path: /.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: Directory: /Dir_1, and dir_path: /.git
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: Directory: /Dir_1, and dir_path: /.git
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /HEAD.
-DEBUG: Directory: /Dir_1, and dir_path: /HEAD
-DEBUG: getattr failed, new_path not found: /HEAD nor secondary_path has been found /HEAD.
+DEBUG: readdir_callback called with path = /Dir_1
+DEBUG: Parent_dir: / and path: /Dir_1
+DEBUG: Listed file: File_1.ACTUATOR in directory: /Dir_1
 DEBUG: Getattr callback called with path: /.
 DEBUG: Getattr callback called with path: /Dir_1.
 DEBUG: Directory: /Dir_1, and dir_path: /Dir_1
 DEBUG: Directory found: /Dir_1
 DEBUG: getattr for directory: /Dir_1
+DEBUG: Getattr callback called with path: /Dir_1/File_1.ACTUATOR.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1.ACTUATOR
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.ACTUATOR in directory: /Dir_1
+DEBUG: getattr for file: File_1.ACTUATOR in directory: /Dir_1
+DEBUG: unlink_callback called with path = /Dir_1/File_1.ACTUATOR
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.ACTUATOR in directory: /Dir_1
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.ACTUATOR in directory: /Dir_1
+INFO: Removing file: File_1.ACTUATOR from directory: /Dir_1
+INFO: File successfully removed: File_1.ACTUATOR
+INFO: Entering remove_device_from_json function.
+Inside the if condition.
+0: Child name: File_1, device name: File_1.
+INFO: File 'File_1' removed successfully.
+INFO: JSON data written successfully to file.
+INFO: File successfully unlinked: /Dir_1/File_1.ACTUATOR
+DEBUG: Getattr callback called with path: /.
+DEBUG: Getattr callback called with path: /Dir_1.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1
+DEBUG: Getattr callback called with path: /.git.
+DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
+DEBUG: Getattr callback called with path: /.git.
+DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
+DEBUG: Getattr callback called with path: /.
+DEBUG: readdir_callback called with path = /
