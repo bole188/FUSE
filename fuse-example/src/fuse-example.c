@@ -412,13 +412,13 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
 
     if (file) { 
         stbuf->st_mode = S_IFREG | 0644;  // Set as a regular file
-        stbuf->st_size = calculate_file_size(secondary_path);
+        stbuf->st_size = 0;
         stbuf->st_nlink = 1;
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
-        stbuf->st_atime = file->stat.st_atime;
-        stbuf->st_mtime = file->stat.st_mtime;
-        stbuf->st_ctime = file->stat.st_ctime;
+        stbuf->st_atime = time(NULL);
+        stbuf->st_mtime = time(NULL);
+        stbuf->st_ctime = time(NULL);
 
         snprintf(log_message, sizeof(log_message), "DEBUG: getattr for file: %s in directory: %s", file_name, parent_dir);
         log_debug(log_message);
@@ -442,9 +442,13 @@ static int readdir_callback(const char *path, void *buf, fuse_fill_dir_t filler,
     // Add default entries for the current and parent directories
     filler(buf, ".", NULL, 0);
     filler(buf, "..", NULL, 0);
-    filler(buf, "GYRO", NULL, 0);
-    filler(buf, "GPS", NULL, 0);
-    filler(buf, "IMEI", NULL, 0);
+    if(strcmp(path, "/") != 0){
+        filler(buf, "GYRO", NULL, 0);
+        filler(buf, "GPS", NULL, 0);
+        filler(buf, "IMEI", NULL, 0); 
+    }
+    snprintf(log_message, sizeof(log_message), "DEBUG: Reading after main fillers.");
+    log_debug(log_message);
 
     // List directories in the current path based on dir_list structure
     for (size_t i = 0; i < dir_list.size; i++) {
