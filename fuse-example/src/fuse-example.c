@@ -40,10 +40,13 @@ typedef struct {
 } ParsedInput;
 
 typedef struct {
-    struct stat stat;
-    char *name;       // Name of the file
-    char *directory;  // Directory path where the file is located
+    struct stat stat;  // Metadata
+    char *name;        // Name of the file
+    char *directory;   // Directory path where the file is located
+    char *data;        // Pointer to the file's content
+    size_t capacity;   // Allocated size of the data buffer
 } File;
+
 
 
 typedef struct {
@@ -92,7 +95,6 @@ void free_dir_list(DirList *list) {
     list->capacity = 0;
 }
 
-
 void add_file(FileList *list, const char *name, char *directory) {
     if (list->size >= list->capacity) {
         list->capacity *= 2;
@@ -109,6 +111,8 @@ void add_file(FileList *list, const char *name, char *directory) {
     new_file->stat.st_atime = time(NULL);
     new_file->stat.st_mtime = time(NULL);
     new_file->stat.st_ctime = time(NULL);
+    new_file->data = NULL;       // Initialize data to NULL
+    new_file->capacity = 0;     // No capacity allocated initially
 
     list->files[list->size++] = new_file;
 
@@ -117,7 +121,6 @@ void add_file(FileList *list, const char *name, char *directory) {
     snprintf(log_message, sizeof(log_message), "DEBUG: Added file: %s in directory: %s", name, directory);
     log_debug(log_message);
 }
-
 
 
 const char *extract_directory_name(const char *path) {
@@ -210,18 +213,27 @@ int find_dir(const DirList *list, const char *dir_path) {
 }
 
 long calculate_file_size(const char *file_path) {
-    FILE *file = fopen(file_path, "rb");  // Open the file in binary mode
+    char log_message[512];
+    char parent_dir[1024];
+    get_parent_directory(file_path, parent_dir);
+    const char *file_name = extract_directory_name(file_path);
+
+    // Search for the file in the FileList
+    File *file = find_file(&file_list, file_name, parent_dir);
     if (!file) {
-        perror("Error opening file");
+        snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
+        log_debug(log_message);
         return -1;  // Indicate an error
     }
 
-    fseek(file, 0, SEEK_END);  // Move to the end of the file
-    long size = ftell(file);   // Get the current file pointer position (size in bytes)
-    fclose(file);
+    // Return the size from the file's metadata
+    snprintf(log_message, sizeof(log_message), "INFO: Calculated size for file: %s is %ld bytes.", file_name, file->stat.st_size);
+    log_debug(log_message);
 
-    return size;
+    return file->stat.st_size;
 }
+
+
 
 long calculate_directory_size(const char *dir_path) {
     long total_size = 0;
@@ -357,6 +369,7 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     if (strcmp(path, "/") == 0) {
         stbuf->st_mode = S_IFDIR | 0775;
         stbuf->st_nlink = 2;
+        stbuf->st_size = calculate_directory_size(path);
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
         stbuf->st_atime = time(NULL);
@@ -390,12 +403,12 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_nlink = 2;
         stbuf->st_size = calculate_directory_size(new_path);  // Directory size
         stbuf->st_uid = getuid();
-        stbuf->st_gid = getgid();
+        stbuf->st_gid = getgid();   
         stbuf->st_atime = dir_list.stats[dir_index].st_atime;
         stbuf->st_mtime = dir_list.stats[dir_index].st_mtime;
         stbuf->st_ctime = dir_list.stats[dir_index].st_ctime;
 
-        snprintf(log_message, sizeof(log_message), "DEBUG: getattr for directory: %s", new_path);
+        snprintf(log_message, sizeof(log_message), "DEBUG: getattr for directory: %s, its size is: %d.", new_path,stbuf->st_size);
         log_debug(log_message);
         return 0;
     }
@@ -412,7 +425,7 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
 
     if (file) { 
         stbuf->st_mode = S_IFREG | 0644;  // Set as a regular file
-        stbuf->st_size = 0;
+        stbuf->st_size = calculate_file_size(secondary_path);
         stbuf->st_nlink = 1;
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
@@ -420,7 +433,7 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_mtime = time(NULL);
         stbuf->st_ctime = time(NULL);
 
-        snprintf(log_message, sizeof(log_message), "DEBUG: getattr for file: %s in directory: %s", file_name, parent_dir);
+        snprintf(log_message, sizeof(log_message), "DEBUG: getattr for file: %s in directory: %s. Its size is: %d.", file_name, parent_dir,stbuf->st_size);
         log_debug(log_message);
         return 0;
     }
@@ -496,6 +509,7 @@ static void* init_callback(struct fuse_conn_info *conn) {
 }
 
 static int open_callback(const char *path, struct fuse_file_info *fi) {
+    log_debug("Inside open callback.");
     char parent_dir[1024];
     char log_message[512];
     get_parent_directory(path, parent_dir);
@@ -964,14 +978,113 @@ static int unlink_callback(const char *path) {
     return 0;  // Success
 }
 
+static int write_callback(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
+    char log_message[512];
+    char parent_dir[1024];
+    get_parent_directory(path, parent_dir);
+    const char *file_name = extract_directory_name(path);
+
+    // Locate the file in the FileList
+    File *file = find_file(&file_list, file_name, parent_dir);
+    if (!file) {
+        snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
+        log_debug(log_message);
+        return -ENOENT; // File not found
+    }
+
+    // Ensure the file's data buffer is large enough
+    size_t required_capacity = offset + size;
+    if (required_capacity > file->capacity) {
+        // If the file's current data buffer is too small, reallocate it
+        char *new_data = realloc(file->data, required_capacity);
+        if (!new_data) {
+            log_debug("ERROR: Memory allocation failed during file write.");
+            return -ENOMEM; // Out of memory
+        }
+        file->data = new_data;
+        file->capacity = required_capacity;
+    }
+
+    // Copy the data from the buffer to the file's memory
+    memcpy(file->data + offset, buf, size);
+
+    // Update file metadata (size)
+    long new_size = offset + size;
+    if (new_size > file->stat.st_size) {
+        file->stat.st_size = new_size;  // Update file size if the new size is larger
+    }
+    file->stat.st_mtime = time(NULL); // Update modification time
+
+    // Log the write operation
+    snprintf(log_message, sizeof(log_message), "INFO: Written %zu bytes to file: %s at offset %ld. New size: %ld bytes.", 
+             size, file_name, offset, file->stat.st_size);
+    log_debug(log_message);
+
+    return size; // Return the number of bytes written
+}
+
+static int truncate_callback(const char *path, off_t size) {
+    log_debug("Inside the truncate callback.");
+    char log_message[512];
+    char parent_dir[1024];
+    get_parent_directory(path, parent_dir);
+    const char *file_name = extract_directory_name(path);
+
+    // Find the file in the FileList
+    File *file = find_file(&file_list, file_name, parent_dir);
+    if (!file) {
+        snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
+        log_debug(log_message);
+        return -ENOENT; // File not found
+    }
+
+    // If the requested size is larger, expand the file
+    if (size > file->stat.st_size) {
+        char *new_data = realloc(file->data, size);
+        if (!new_data) {
+            log_debug("ERROR: Memory allocation failed during truncate.");
+            return -ENOMEM; // Out of memory
+        }
+        file->data = new_data;
+
+        // Zero-fill the newly allocated space
+        memset(file->data + file->stat.st_size, 0, size - file->stat.st_size);
+
+        snprintf(log_message, sizeof(log_message), "INFO: File expanded to %ld bytes: %s", size, file_name);
+        log_debug(log_message);
+    } 
+    // If the requested size is smaller, truncate the file
+    else if (size < file->stat.st_size) {
+        char *new_data = realloc(file->data, size);
+        if (!new_data && size > 0) {
+            log_debug("ERROR: Memory allocation failed during truncate.");
+            return -ENOMEM; // Out of memory
+        }
+        file->data = new_data;
+
+        snprintf(log_message, sizeof(log_message), "INFO: File truncated to %ld bytes: %s", size, file_name);
+        log_debug(log_message);
+    }
+
+    // Update file metadata
+    file->stat.st_size = size;
+    file->stat.st_mtime = time(NULL); // Update modification time
+    log_debug("Outside the truncate callback.");
+
+    return 0; // Success
+}
+
+
 
 static struct fuse_operations fuse_example_operations = {
   .getattr = getattr_callback,
   .open = open_callback,
   .create = create_callback,
   //.read = read_callback,
+  .write = write_callback,
   .readdir = readdir_callback,
   .init = init_callback,
+  .truncate = truncate_callback,
   .mkdir = mkdir_callback,
   .utimens = utimens_callback,
   .rmdir = rmdir_callback,
