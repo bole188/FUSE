@@ -1,9 +1,12 @@
 Filesystem mounted and log file cleared && json file cleared.
 DEBUG: Getattr callback called with path: /.
+inside calc dir size.
 DEBUG: Getattr callback called with path: /Dir_2.1234.9982.
+DEBUG: Directory: /, and dir_path: /Dir_2
 Output path in modify path to remove subs: /Dir_2.1234
 DEBUG: getattr failed, new_path not found: /Dir_2 nor secondary_path has been found /Dir_2.1234.
 DEBUG: mkdir_callback called with path = /Dir_2.1234.9982, permissions = 755
+DEBUG: Directory: /, and dir_path: /Dir_2
 INFO: Entering add_device_to_json function.
 INFO: Initialized new JSON structure with devices array.
 INFO: Folder added to devices: Dir_2
@@ -19,15 +22,21 @@ DEBUG: Creating IMEI file.
 DEBUG: Parent directory is /Dir_2.1234.9982
 INFO: Directory /Dir_2 created successfully and device added to JSON.
 DEBUG: Getattr callback called with path: /Dir_2.1234.9982.
+DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
+inside calc dir size.
 DEBUG: getattr for directory: /Dir_2, its size is: 0.
 DEBUG: Getattr callback called with path: /.
+inside calc dir size.
 DEBUG: Getattr callback called with path: /Dir_2.
+DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
+inside calc dir size.
 DEBUG: getattr for directory: /Dir_2, its size is: 0.
 DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.1236.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3
 Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
@@ -36,6 +45,7 @@ DEBUG: Parent directory is /Dir_2
 INFO: File_3, ACTUATOR, 1236, .
 Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
 DEBUG: Real path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
 DEBUG: Added file: File_3.ACTUATOR in directory: /Dir_2
@@ -46,6 +56,7 @@ INFO: File added to folder: Dir_2
 INFO: JSON data written successfully to file.
 DEBUG: File created successfully: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.1236.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3
 Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
@@ -57,13 +68,16 @@ DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
 Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
 DEBUG: Utimens callback called with /Dir_2/File_3.ACTUATOR.1236 as path.
 DEBUG: Parent directory is /Dir_2
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
 DEBUG: Updated modification time for parent directory: /Dir_2
 DEBUG: Updated timestamps for file: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.1236.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3
 Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
@@ -72,7 +86,34 @@ DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
 DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+DEBUG: Getattr callback called with path: /Dir_2.
+DEBUG: Directory: /, and dir_path: /Dir_2
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
+DEBUG: Directory found: /Dir_2
+inside calc dir size.
+inside calc dir size.
+DEBUG: getattr for directory: /Dir_2, its size is: 0.
+DEBUG: readdir_callback called with path = /Dir_2
+DEBUG: Reading after main fillers.
+DEBUG: Parent_dir: / and path: /Dir_2
+DEBUG: Parent_dir: / and path: /Dir_2
+DEBUG: Listed file: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Getattr callback called with path: /.
+inside calc dir size.
+DEBUG: Getattr callback called with path: /Dir_2/GYRO.
+DEBUG: Getattr callback called with path: /Dir_2/GPS.
+DEBUG: Getattr callback called with path: /Dir_2/IMEI.
 DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
@@ -89,6 +130,7 @@ DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 Outside the truncate callback.
 DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
@@ -96,31 +138,104 @@ DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
 DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+Inside write callback function.
 DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
-INFO: Written 37 bytes to file: File_3.ACTUATOR at offset 0. New size: 37 bytes.
+inf
+, 4
+ERROR: invalid writing.
 DEBUG: Getattr callback called with path: /Dir_2.
+DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
-DEBUG: getattr for directory: /Dir_2, its size is: 37.
+inside calc dir size.
+inside calc dir size.
+DEBUG: getattr for directory: /Dir_2, its size is: 0.
 DEBUG: readdir_callback called with path = /Dir_2
 DEBUG: Reading after main fillers.
 DEBUG: Parent_dir: / and path: /Dir_2
+DEBUG: Parent_dir: / and path: /Dir_2
 DEBUG: Listed file: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Getattr callback called with path: /.
+inside calc dir size.
 DEBUG: Getattr callback called with path: /Dir_2/GYRO.
 DEBUG: Getattr callback called with path: /Dir_2/GPS.
 DEBUG: Getattr callback called with path: /Dir_2/IMEI.
 DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
-INFO: Calculated size for file: File_3.ACTUATOR is 37 bytes.
-DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 37.
-DEBUG: Getattr callback called with path: /.
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+Inside open callback.
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: File opened successfully: File_3.ACTUATOR in directory: /Dir_2
+Inside the truncate callback.
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+Outside the truncate callback.
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+Inside write callback function.
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+info
+, 5
+inside strcmp statement for info
+inside strcmp statement for info, after strcpy.
+[File_3.ACTUATOR] : info
 DEBUG: Getattr callback called with path: /Dir_2.
+DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
-DEBUG: getattr for directory: /Dir_2, its size is: 37.
+inside calc dir size.
+inside calc dir size.
+DEBUG: getattr for directory: /Dir_2, its size is: 0.
+DEBUG: readdir_callback called with path = /Dir_2
+DEBUG: Reading after main fillers.
+DEBUG: Parent_dir: / and path: /Dir_2
+DEBUG: Parent_dir: / and path: /Dir_2
+DEBUG: Listed file: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Getattr callback called with path: /.
+inside calc dir size.
+DEBUG: Getattr callback called with path: /Dir_2/GYRO.
+DEBUG: Getattr callback called with path: /Dir_2/GPS.
+DEBUG: Getattr callback called with path: /Dir_2/IMEI.
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+DEBUG: Getattr callback called with path: /.
+inside calc dir size.
+DEBUG: Getattr callback called with path: /Dir_2.
+DEBUG: Directory: /, and dir_path: /Dir_2
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
+DEBUG: Directory found: /Dir_2
+inside calc dir size.
+inside calc dir size.
+DEBUG: getattr for directory: /Dir_2, its size is: 0.

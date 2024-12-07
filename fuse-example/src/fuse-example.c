@@ -45,6 +45,7 @@ typedef struct {
     char *directory;   // Directory path where the file is located
     char *data;        // Pointer to the file's content
     size_t capacity;   // Allocated size of the data buffer
+    char read_type[20];
 } File;
 
 
@@ -237,14 +238,14 @@ long calculate_file_size(const char *file_path) {
 
 long calculate_directory_size(const char *dir_path) {
     long total_size = 0;
-
+    log_debug("inside calc dir size.");
     // Iterate through the file list to sum the size of files in the directory
     for (size_t i = 0; i < file_list.size; i++) {
         if (strcmp(file_list.files[i]->directory, dir_path) == 0) {
             total_size += file_list.files[i]->stat.st_size;
+            log_debug("inside calc dir size.");
         }
     }
-
     return total_size;
 }
 
@@ -372,9 +373,10 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_size = calculate_directory_size(path);
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
-        stbuf->st_atime = time(NULL);
-        stbuf->st_mtime = time(NULL);
-        stbuf->st_ctime = time(NULL);
+        stbuf->st_atime = dir_list.stats[0].st_atime;
+        stbuf->st_mtime = dir_list.stats[0].st_mtime;
+        stbuf->st_ctime = dir_list.stats[0].st_ctime;
+        add_dir(&dir_list,"/");
         return 0;
     }
     if(!strcmp(extract_directory_name(path),"GYRO") || !strcmp(extract_directory_name(path),"GPS") || !strcmp(extract_directory_name(path),"IMEI")){
@@ -383,9 +385,9 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_nlink = 1;
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
-        stbuf->st_atime = time(NULL);
-        stbuf->st_mtime = time(NULL);
-        stbuf->st_ctime = time(NULL);
+        stbuf->st_atime = dir_list.stats[0].st_atime;
+        stbuf->st_mtime = dir_list.stats[0].st_mtime;
+        stbuf->st_ctime = dir_list.stats[0].st_ctime;
         return 0;
     }
     char* new_path = strdup(path);
@@ -429,9 +431,9 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_nlink = 1;
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
-        stbuf->st_atime = time(NULL);
-        stbuf->st_mtime = time(NULL);
-        stbuf->st_ctime = time(NULL);
+        stbuf->st_atime = file->stat.st_atime;
+        stbuf->st_mtime = file->stat.st_mtime;
+        stbuf->st_ctime = file->stat.st_ctime;
 
         snprintf(log_message, sizeof(log_message), "DEBUG: getattr for file: %s in directory: %s. Its size is: %d.", file_name, parent_dir,stbuf->st_size);
         log_debug(log_message);
@@ -979,48 +981,42 @@ static int unlink_callback(const char *path) {
 }
 
 static int write_callback(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
+    log_debug("Inside write callback function.");
     char log_message[512];
     char parent_dir[1024];
     get_parent_directory(path, parent_dir);
     const char *file_name = extract_directory_name(path);
-
-    // Locate the file in the FileList
+    size_t required_capacity = offset + size;
     File *file = find_file(&file_list, file_name, parent_dir);
     if (!file) {
         snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
         log_debug(log_message);
         return -ENOENT; // File not found
     }
-
-    // Ensure the file's data buffer is large enough
-    size_t required_capacity = offset + size;
-    if (required_capacity > file->capacity) {
-        // If the file's current data buffer is too small, reallocate it
-        char *new_data = realloc(file->data, required_capacity);
-        if (!new_data) {
-            log_debug("ERROR: Memory allocation failed during file write.");
-            return -ENOMEM; // Out of memory
-        }
-        file->data = new_data;
-        file->capacity = required_capacity;
-    }
-
-    // Copy the data from the buffer to the file's memory
-    memcpy(file->data + offset, buf, size);
-
-    // Update file metadata (size)
-    long new_size = offset + size;
-    if (new_size > file->stat.st_size) {
-        file->stat.st_size = new_size;  // Update file size if the new size is larger
-    }
-    file->stat.st_mtime = time(NULL); // Update modification time
-
-    // Log the write operation
-    snprintf(log_message, sizeof(log_message), "INFO: Written %zu bytes to file: %s at offset %ld. New size: %ld bytes.", 
-             size, file_name, offset, file->stat.st_size);
+    snprintf(log_message,sizeof(log_message),"%s, %d",buf,strlen(buf));
     log_debug(log_message);
-
-    return size; // Return the number of bytes written
+    //file->data = (char*)calloc(required_capacity,sizeof(char));
+    if(!strcmp(buf,"data\n")){
+        log_debug("inside strcmp statement for data");
+        strcpy(file->read_type,"data");
+        snprintf(log_message,sizeof(log_message),"[%s] : data",file_name);
+        log_debug(log_message);
+        file->stat.st_mtime = time(NULL); // Update modification time
+        return size;
+    } 
+    else if(!strcmp(buf,"info\n")){
+        log_debug("inside strcmp statement for info");
+        strcpy(file->read_type,"info");
+        log_debug("inside strcmp statement for info, after strcpy.");
+        snprintf(log_message,sizeof(log_message),"[%s] : info",file_name);
+        log_debug(log_message);
+        file->stat.st_mtime = time(NULL); // Update modification time
+        return size;
+    }
+    else{
+        log_debug("ERROR: invalid writing.");
+        return -EPERM;
+    }
 }
 
 static int truncate_callback(const char *path, off_t size) {
@@ -1068,7 +1064,6 @@ static int truncate_callback(const char *path, off_t size) {
 
     // Update file metadata
     file->stat.st_size = size;
-    file->stat.st_mtime = time(NULL); // Update modification time
     log_debug("Outside the truncate callback.");
 
     return 0; // Success
