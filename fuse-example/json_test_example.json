@@ -4,15 +4,15 @@
       "Name":"Dir_2",
       "Model":"TTConnectWave",
       "SerialNumber":1234,
-      "RegistrationDate":1733583210,
+      "RegistrationDate":1733665025,
       "IMEI":"   9982",
       "Type":"Folder",
       "Children":[
         {
-          "Name":"File_3",
-          "Model":"ACTUATOR",
-          "SerialNumber":1236,
-          "RegistrationDate":1733583214,
+          "Name":"File_1",
+          "Model":"HY-TTC_30",
+          "SerialNumber":122236,
+          "RegistrationDate":1733665027,
           "Type":"File"
         }
       ]

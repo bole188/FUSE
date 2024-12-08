@@ -88,8 +88,6 @@ DeviceEntry *create_and_add_device_entry(const char *name, const char *model,
 }
 
 
-
-
 void add_device_to_json(DeviceEntry *device, const char *json_path, const char *parent_name) {
     char log_message[512];
 
@@ -219,7 +217,6 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
     json_object_put(root);
 }
 
-// Helper function to recursively remove a folder and its children
 int remove_folder_and_children(struct json_object *devices_array, const char *folder_name) {
     for (int i = 0; i < json_object_array_length(devices_array); i++) {
         struct json_object *device = json_object_array_get_idx(devices_array, i);
@@ -249,7 +246,6 @@ int remove_folder_and_children(struct json_object *devices_array, const char *fo
     }
     return 0; // Folder not found
 }
-
 
 void remove_device_from_json(const char *device_name, const char *json_path) {
     char log_message[512];

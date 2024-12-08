@@ -41,5 +41,9 @@ DeviceEntry *create_and_add_device_entry(const char *name, const char *model,
 void add_to_parent(struct json_object *current, const char *parent_name, struct json_object *device_json);
 int is_valid_model(const char *model, EntryType type);
 void add_device_to_json(DeviceEntry *device, const char *json_path, const char *parent_name);
+struct json_object* find_device(const char* device_name, const char* json_path);
+void remove_device_from_json(const char *device_name, const char *json_path);
+int remove_folder_and_children(struct json_object *devices_array, const char *folder_name);
+const char* find_imei(const char *device_name, const char *json_path);
 
 #endif // DEVICE_MANAGER_H

@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "linux-gcc-x64",
+            "includePath": [
+                "$**",           // This includes all files in your workspace
+                "${workspaceFolder}/inc",           // Add the path to the 'inc' folder here
+                "/usr/include",                    // Standard system include path
+                "/path/to/your/project/inc"        // Add your specific path here if needed
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "${default}",
+            "cppStandard": "${default}",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerArgs": [
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}

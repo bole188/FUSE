@@ -13,9 +13,10 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <limits.h>
-#include <device_manager.h>
+#include "device_manager.h"
 #include <stdarg.h>
 #include <time.h>
+#include<json-c/json.h>
 #include <mntent.h>
 
 static const char *log_file_path = "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/fuse_debug_log.txt";
@@ -47,7 +48,6 @@ typedef struct {
     size_t capacity;   // Allocated size of the data buffer
     char read_type[20];
 } File;
-
 
 
 typedef struct {
@@ -249,6 +249,18 @@ long calculate_directory_size(const char *dir_path) {
     return total_size;
 }
 
+void generate_random_string(char *random_string, size_t length) {
+    srand((unsigned int)time(NULL));
+    const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.+-/*?!@#$%^|&";
+    size_t charset_size = strlen(charset);
+
+    for (size_t i = 0; i < length; i++) {
+        int key = rand() % charset_size; // Random index in charset
+        random_string[i] = charset[key];
+    }
+    random_string[length] = '\0'; // Null-terminate the string
+}
+
 void modify_path(const char *path, const char *directory_name, char *new_path) {
     // Find the position of the last slash in the path to identify the directory part
     const char *last_slash = strrchr(path, '/');
@@ -426,7 +438,10 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     File *file = find_file(&file_list, file_name, parent_dir);
 
     if (file) { 
-        stbuf->st_mode = S_IFREG | 0644;  // Set as a regular file
+        char* model = strrchr(file_name,'.');
+        if(!strcmp(model+1,"ACTUATOR")) stbuf->st_mode = __S_IFREG | 0222;
+        else if(!strcmp(model+1,"SENSOR")) stbuf->st_mode = __S_IFREG | 0444;
+        else stbuf->st_mode = S_IFREG | 0644;
         stbuf->st_size = calculate_file_size(secondary_path);
         stbuf->st_nlink = 1;
         stbuf->st_uid = getuid();
@@ -516,13 +531,16 @@ static int open_callback(const char *path, struct fuse_file_info *fi) {
     char log_message[512];
     get_parent_directory(path, parent_dir);
     const char *file_name = extract_directory_name(path);
-
+    if(!strcmp(file_name,"GPS") || !strcmp(file_name,"IMEI") || !strcmp(file_name,"GYRO")){
+        log_debug("Special file detected.");
+        return 0;
+    }
     if (find_file(&file_list, file_name, parent_dir) != NULL){
         snprintf(log_message, sizeof(log_message), "DEBUG: File opened successfully: %s in directory: %s", file_name, parent_dir);
         log_debug(log_message);
         return 0;  // Success
     }
-    snprintf(log_message, sizeof(log_message), "DEBUG: File not opened");
+    snprintf(log_message, sizeof(log_message), "DEBUG: File not opened. File name is: %s.",file_name);
     log_debug(log_message);
     return -ENOENT;
 }
@@ -669,8 +687,6 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
     if(!strcmp(file_name,"GYRO") || !strcmp(file_name,"IMEI") || !strcmp(file_name,"GPS")){
         snprintf(log_message, sizeof(log_message), "DEBUG: Creating %s file.", file_name);
         log_debug(log_message);
-        get_parent_directory(path,parent_dir);
-        //add_file(&file_list, file_name, parent_dir);
         return 0;
     }
     ParsedInput parsed_input;
@@ -721,26 +737,73 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
     return 0;  // Success
 }
 
-/*static int read_callback(const char *path, char *buf, size_t size, off_t offset,
+
+static int read_callback(const char *path, char *buf, size_t size, off_t offset,
     struct fuse_file_info *fi) {
 
-  if (strcmp(path, filepath) == 0) {
-    size_t len = strlen(filecontent);
-    if (offset >= len) {
-      return 0;
+    log_debug("Inside read callback function.");
+    char log_message[512];
+    char parent_dir[1024];
+    get_parent_directory(path, parent_dir);
+    const char *file_name = extract_directory_name(path);
+    if(!strcmp(file_name,"GPS")){
+        snprintf(log_message, sizeof(log_message), "%d %d", rand(), rand());
+        log_debug(log_message);
+        return size;
     }
-
-    if (offset + size > len) {
-      memcpy(buf, filecontent + offset, len - offset);
-      return len - offset;
+    else if(!strcmp(file_name,"GYRO")){
+        snprintf(log_message, sizeof(log_message),"%d %d %d",rand(),rand());
+        log_debug(log_message);
+        return size;
     }
+    else if(!strcmp(file_name,"IMEI")){
+        const char* dev_imei = find_imei(extract_directory_name(parent_dir),json_path);
+        snprintf(log_message, sizeof(log_message),"Device IMEI: %s.",dev_imei);
+        log_debug(log_message);
+        return size;
+    }
+    File *file = find_file(&file_list, file_name, parent_dir);
+    if (!file) {
+        snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
+        log_debug(log_message);
+        return -ENOENT; // File not found
+    }
+    if(!strcmp(file->read_type,"data")){
+        char rand_seq[8];
+        generate_random_string(rand_seq,8);
+        snprintf(log_message, sizeof(log_message),"RAND SEQ: %s.",rand_seq);
+        log_debug(log_message);
+        return size;
+    }
+    if(!strcmp(file->read_type,"info")){
+        struct json_object *device = find_device(file_name, json_path);
+        struct json_object *name_obj;
+        struct json_object *ser_num;
+        struct json_object *reg_date;
+        struct json_object *sys_id;
+        struct json_object *model;
+        if (json_object_object_get_ex(device, "Name", &name_obj)){
+            snprintf(log_message,sizeof(log_message),"Device Name: %s\n", json_object_get_string(name_obj));
+        }
+        if (json_object_object_get_ex(device, "Model", &model)){
+            snprintf(log_message,sizeof(log_message),"Device model: %s\n", json_object_get_string(model));
+        }
+        if(json_object_object_get_ex(device, "SerialNumber", &ser_num)){
+            snprintf(log_message,sizeof(log_message),"Device serial num: %s\n", json_object_get_string(ser_num));
+        }
+        if(json_object_object_get_ex(device, "RegistrationDate", &reg_date)){
+            snprintf(log_message,sizeof(log_message),"Device reg date: %s\n", json_object_get_string(reg_date));
+        }
+        /*if(json_object_object_get_ex(device, "System id", &sys_id)){
+            snprintf(log_message,sizeof(log_message),"Device sys id: %s\n", json_object_get_string(sys_id));
+        }*/
+        log_debug(log_message);
+        return size;
+    }
+    
 
-    memcpy(buf, filecontent + offset, size);
     return size;
-  }
-
-  return -ENOENT;
-}*/
+}
 
 static int validate_and_parse_mkdir_input(const char *dir_name, ParsedInput *parsed) {
     regex_t regex;
@@ -995,8 +1058,16 @@ static int write_callback(const char *path, const char *buf, size_t size, off_t 
     }
     snprintf(log_message,sizeof(log_message),"%s, %d",buf,strlen(buf));
     log_debug(log_message);
-    //file->data = (char*)calloc(required_capacity,sizeof(char));
-    if(!strcmp(buf,"data\n")){
+    char* dev_model = strrchr(file_name,'.') + 1;
+    if(!strcmp(dev_model,"ACTUATOR")){
+        log_debug("Inside strcmp statement for actuator.");
+        strcpy(file->read_type,buf);
+        snprintf(log_message,sizeof(log_message),"[%s] : %s",file_name,buf);
+        log_debug(log_message);
+        file->stat.st_mtime = time(NULL); // Update modification time
+        return size;
+    }
+    else if(!strcmp(buf,"data\n")){
         log_debug("inside strcmp statement for data");
         strcpy(file->read_type,"data");
         snprintf(log_message,sizeof(log_message),"[%s] : data",file_name);
@@ -1069,13 +1140,178 @@ static int truncate_callback(const char *path, off_t size) {
     return 0; // Success
 }
 
+const char* find_imei(const char *device_name, const char *json_path) {
+    char log_message[512];
 
+    // Open the JSON file
+    FILE *file = fopen(json_path, "r");
+    if (!file) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Failed to open JSON file: %s", json_path);
+        log_debug(log_message);
+        return NULL;  // Return NULL if file can't be opened
+    }
+
+    // Read the file contents into a string
+    fseek(file, 0, SEEK_END);
+    size_t size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    char *data = malloc(size + 1);
+    if (!data) {
+        fclose(file);
+        snprintf(log_message, sizeof(log_message), "ERROR: Memory allocation failed.");
+        log_debug(log_message);
+        return NULL;
+    }
+
+    fread(data, 1, size, file);
+    data[size] = '\0';  // Null-terminate the string
+    fclose(file);
+
+    // Parse the JSON data
+    struct json_object *root = json_tokener_parse(data);
+    free(data);
+
+    if (!root) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Failed to parse JSON.");
+        log_debug(log_message);
+        return NULL;
+    }
+
+    // Retrieve the "devices" array
+    struct json_object *devices_array = NULL;
+    if (!json_object_object_get_ex(root, "devices", &devices_array)) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Devices array not found in JSON.");
+        log_debug(log_message);
+        json_object_put(root);
+        return NULL;
+    }
+
+    // Iterate through devices to find the device by name and return its IMEI
+    for (int i = 0; i < json_object_array_length(devices_array); i++) {
+        struct json_object *device = json_object_array_get_idx(devices_array, i);
+        struct json_object *name_obj = NULL;
+
+        if (json_object_object_get_ex(device, "Name", &name_obj) &&
+            strcmp(json_object_get_string(name_obj), device_name) == 0) {
+            // Device found, now extract its IMEI
+            struct json_object *imei_obj = NULL;
+            if (json_object_object_get_ex(device, "IMEI", &imei_obj)) {
+                const char *imei = json_object_get_string(imei_obj);
+                json_object_put(root);  // Free the root object
+                return imei;  // Return the IMEI
+            } else {
+                snprintf(log_message, sizeof(log_message), "IMEI not found for device: %s", device_name);
+                log_debug(log_message);
+                json_object_put(root);
+                return NULL;  // Return NULL if IMEI is not found
+            }
+        }
+    }
+
+    // Device not found
+    snprintf(log_message, sizeof(log_message), "Device '%s' not found in JSON.", device_name);
+    log_debug(log_message);
+    json_object_put(root);
+    return NULL;  // Return NULL if device is not found
+}
+
+struct json_object* find_device(const char* device_name, const char* json_path) {
+    char log_message[512];
+    if (device_name == NULL || json_path == NULL) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Invalid arguments passed to find_device.");
+        log_debug(log_message);
+        return NULL;
+    }
+
+    snprintf(log_message, sizeof(log_message), "INFO: Entering find_device function.");
+    log_debug(log_message);
+
+    // Load the JSON file
+    FILE* file = fopen(json_path, "r");
+    if (!file) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Failed to open JSON file: %s", json_path);
+        log_debug(log_message);
+        return NULL;
+    }
+
+    fseek(file, 0, SEEK_END);
+    size_t size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    char* data = malloc(size + 1);
+    if (!data) {
+        fclose(file);
+        snprintf(log_message, sizeof(log_message), "ERROR: Memory allocation failed.");
+        log_debug(log_message);
+        return NULL;
+    }
+
+    fread(data, 1, size, file);
+    data[size] = '\0';
+    fclose(file);
+
+    struct json_object* root = json_tokener_parse(data);
+    free(data);
+
+    if (!root) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Failed to parse JSON file.");
+        log_debug(log_message);
+        return NULL;
+    }
+
+    // Retrieve the "devices" array
+    struct json_object* devices_array = NULL;
+    if (!json_object_object_get_ex(root, "devices", &devices_array)) {
+        snprintf(log_message, sizeof(log_message), "ERROR: Devices array not found in JSON.");
+        log_debug(log_message);
+        json_object_put(root);
+        return NULL;
+    }
+
+    // Search for the device by name
+    for (int i = 0; i < json_object_array_length(devices_array); i++) {
+        struct json_object* device = json_object_array_get_idx(devices_array, i);
+        struct json_object* name_obj = NULL;
+
+        if (json_object_object_get_ex(device, "Name", &name_obj) &&
+            strcmp(json_object_get_string(name_obj), device_name) == 0) {
+            json_object_get(device);  // Increment ref count to return it safely
+            json_object_put(root);   // Free the root object
+            return device;
+        }
+
+        // Check if this is a folder with children
+        struct json_object* type_obj = NULL;
+        struct json_object* children_obj = NULL;
+        if (json_object_object_get_ex(device, "Type", &type_obj) &&
+            strcmp(json_object_get_string(type_obj), "Folder") == 0 &&
+            json_object_object_get_ex(device, "Children", &children_obj)) {
+            for (int j = 0; j < json_object_array_length(children_obj); j++) {
+                struct json_object* child = json_object_array_get_idx(children_obj, j);
+                struct json_object* child_name = NULL;
+
+                if (json_object_object_get_ex(child, "Name", &child_name) &&
+                    strcmp(json_object_get_string(child_name), device_name) == 0) {
+                    json_object_get(child);  // Increment ref count to return it safely
+                    json_object_put(root);  // Free the root object
+                    return child;
+                }
+            }
+        }
+    }
+
+    snprintf(log_message, sizeof(log_message), "INFO: Device '%s' not found.", device_name);
+    log_debug(log_message);
+    json_object_put(root);
+    return NULL;
+}
 
 static struct fuse_operations fuse_example_operations = {
   .getattr = getattr_callback,
   .open = open_callback,
   .create = create_callback,
-  //.read = read_callback,
+  .read = read_callback,
   .write = write_callback,
   .readdir = readdir_callback,
   .init = init_callback,
@@ -1100,3 +1336,4 @@ int main(int argc, char *argv[])
   return result;
 
 }
+
