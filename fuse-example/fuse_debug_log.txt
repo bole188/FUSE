@@ -53,6 +53,7 @@ DEBUG: Real path: /Dir_2/File_3.ACTUATOR
 DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
+<<<<<<< HEAD
 DEBUG: Added file: File_1.HY-TTC_30 in directory: /Dir_2
 =======
 DEBUG: getattr for directory: /Dir_2
@@ -69,17 +70,28 @@ DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
 DEBUG: Added file: File_2.ACTUATOR in directory: /Dir_2
 >>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
+=======
+DEBUG: Added file: File_3.ACTUATOR in directory: /Dir_2
+>>>>>>> parent of 17d6454 (minor problems with find_device function)
 INFO: Entering add_device_to_json function.
 INFO: Adding file to parent folder: Dir_2
 INFO: Folder name: Dir_2, and parent name: Dir_2.
 INFO: File added to folder: Dir_2
 INFO: JSON data written successfully to file.
 <<<<<<< HEAD
+<<<<<<< HEAD
 DEBUG: File created successfully: File_1.HY-TTC_30 in directory: /Dir_2
 DEBUG: Getattr callback called with path: /Dir_2/File_1.HY-TTC_30.122236.
 DEBUG: Directory: /, and dir_path: /Dir_2/File_1
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_1
 Output path in modify path to remove subs: /Dir_2/File_1.HY-TTC_30
+=======
+DEBUG: File created successfully: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.1236.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3
+Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
+>>>>>>> parent of 17d6454 (minor problems with find_device function)
 DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Parent directory is /Dir_2
@@ -104,6 +116,7 @@ Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Parent directory is /Dir_2
+<<<<<<< HEAD
 DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
 INFO: Calculated size for file: File_1.HY-TTC_30 is 0 bytes.
 DEBUG: getattr for file: File_1.HY-TTC_30 in directory: /Dir_2. Its size is: 0.
@@ -131,6 +144,11 @@ DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_2.ACTUATOR in directory: /Dir_2
 DEBUG: getattr for file: File_2.ACTUATOR in directory: /Dir_2
 >>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
+=======
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+>>>>>>> parent of 17d6454 (minor problems with find_device function)
 DEBUG: Getattr callback called with path: /Dir_2.
 DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
@@ -143,6 +161,7 @@ DEBUG: readdir_callback called with path = /Dir_2
 DEBUG: Reading after main fillers.
 DEBUG: Parent_dir: / and path: /Dir_2
 DEBUG: Parent_dir: / and path: /Dir_2
+<<<<<<< HEAD
 DEBUG: Listed file: File_1.HY-TTC_30 in directory: /Dir_2
 =======
 DEBUG: getattr for directory: /Dir_2
@@ -160,6 +179,9 @@ DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_2.ACTUATOR in directory: /Dir_2
 DEBUG: getattr for file: File_2.ACTUATOR in directory: /Dir_2
 >>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
+=======
+DEBUG: Listed file: File_3.ACTUATOR in directory: /Dir_2
+>>>>>>> parent of 17d6454 (minor problems with find_device function)
 DEBUG: Getattr callback called with path: /.
 inside calc dir size.
 DEBUG: Getattr callback called with path: /Dir_2/GYRO.
@@ -278,92 +300,21 @@ DEBUG: readdir_callback called with path = /Dir_2
 DEBUG: Reading after main fillers.
 DEBUG: Parent_dir: / and path: /Dir_2
 DEBUG: Parent_dir: / and path: /Dir_2
-DEBUG: Listed file: File_1.HY-TTC_30 in directory: /Dir_2
+DEBUG: Listed file: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Getattr callback called with path: /.
 inside calc dir size.
-DEBUG: Getattr callback called with path: /Dir_2.
-DEBUG: Directory: /, and dir_path: /Dir_2
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
-DEBUG: Directory found: /Dir_2
-inside calc dir size.
-inside calc dir size.
-DEBUG: getattr for directory: /Dir_2, its size is: 0.
-DEBUG: Getattr callback called with path: /Dir_2/File_1.HY-TTC_30.
-DEBUG: Directory: /, and dir_path: /Dir_2/File_1.HY-TTC_30
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_1.HY-TTC_30
+DEBUG: Getattr callback called with path: /Dir_2/GYRO.
+DEBUG: Getattr callback called with path: /Dir_2/GPS.
+DEBUG: Getattr callback called with path: /Dir_2/IMEI.
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
-INFO: Calculated size for file: File_1.HY-TTC_30 is 0 bytes.
-DEBUG: getattr for file: File_1.HY-TTC_30 in directory: /Dir_2. Its size is: 0.
-DEBUG: Getattr callback called with path: /Dir_2/File_1.HY-TTC_30.
-DEBUG: Directory: /, and dir_path: /Dir_2/File_1.HY-TTC_30
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_1.HY-TTC_30
-DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
-DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
-INFO: Calculated size for file: File_1.HY-TTC_30 is 0 bytes.
-DEBUG: getattr for file: File_1.HY-TTC_30 in directory: /Dir_2. Its size is: 0.
-Inside open callback.
-DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
-DEBUG: File opened successfully: File_1.HY-TTC_30 in directory: /Dir_2
-Inside read callback function.
-DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
-INFO: Entering find_device function.
-INFO: Device 'File_1.HY-TTC_30' not found.
-[File_1.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: Directory: /, and dir_path: /.git
-DEBUG: Directory: /Dir_2, and dir_path: /.git
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: Directory: /, and dir_path: /.git
-DEBUG: Directory: /Dir_2, and dir_path: /.git
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-inside calc dir size.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Parent_dir: / and path: /
-DEBUG: Listed directory: 
-DEBUG: Parent_dir: / and path: /
-DEBUG: Listed directory: Dir_2
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: Directory: /, and dir_path: /.git
-DEBUG: Directory: /Dir_2, and dir_path: /.git
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: Directory: /, and dir_path: /.git
-DEBUG: Directory: /Dir_2, and dir_path: /.git
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-inside calc dir size.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Parent_dir: / and path: /
-DEBUG: Listed directory: 
-DEBUG: Parent_dir: / and path: /
-DEBUG: Listed directory: Dir_2
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: Directory: /, and dir_path: /.git
-DEBUG: Directory: /Dir_2, and dir_path: /.git
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: Directory: /, and dir_path: /.git
-DEBUG: Directory: /Dir_2, and dir_path: /.git
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-inside calc dir size.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Parent_dir: / and path: /
-DEBUG: Listed directory: 
-DEBUG: Parent_dir: / and path: /
-DEBUG: Listed directory: Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
 DEBUG: Getattr callback called with path: /.
 inside calc dir size.
 DEBUG: Getattr callback called with path: /Dir_2.

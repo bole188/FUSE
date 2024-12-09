@@ -415,10 +415,7 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     File *file = find_file(&file_list, file_name, parent_dir);
 
     if (file) { 
-        char* model = strrchr(file_name,'.');
-        if(!strcmp(model+1,"ACTUATOR")) stbuf->st_mode = __S_IFREG | 0222;
-        else if(!strcmp(model+1,"SENSOR")) stbuf->st_mode = __S_IFREG | 0444;
-        else stbuf->st_mode = S_IFREG | 0644;
+        stbuf->st_mode = S_IFREG | 0644;  // Set as a regular file
         stbuf->st_size = calculate_file_size(secondary_path);
         stbuf->st_nlink = 1;
         stbuf->st_uid = getuid();
@@ -1060,178 +1057,13 @@ static int truncate_callback(const char *path, off_t size) {
     return 0; // Success
 }
 
-const char* find_imei(const char *device_name, const char *json_path) {
-    char log_message[512];
 
-    // Open the JSON file
-    FILE *file = fopen(json_path, "r");
-    if (!file) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Failed to open JSON file: %s", json_path);
-        log_debug(log_message);
-        return NULL;  // Return NULL if file can't be opened
-    }
-
-    // Read the file contents into a string
-    fseek(file, 0, SEEK_END);
-    size_t size = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    char *data = malloc(size + 1);
-    if (!data) {
-        fclose(file);
-        snprintf(log_message, sizeof(log_message), "ERROR: Memory allocation failed.");
-        log_debug(log_message);
-        return NULL;
-    }
-
-    fread(data, 1, size, file);
-    data[size] = '\0';  // Null-terminate the string
-    fclose(file);
-
-    // Parse the JSON data
-    struct json_object *root = json_tokener_parse(data);
-    free(data);
-
-    if (!root) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Failed to parse JSON.");
-        log_debug(log_message);
-        return NULL;
-    }
-
-    // Retrieve the "devices" array
-    struct json_object *devices_array = NULL;
-    if (!json_object_object_get_ex(root, "devices", &devices_array)) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Devices array not found in JSON.");
-        log_debug(log_message);
-        json_object_put(root);
-        return NULL;
-    }
-
-    // Iterate through devices to find the device by name and return its IMEI
-    for (int i = 0; i < json_object_array_length(devices_array); i++) {
-        struct json_object *device = json_object_array_get_idx(devices_array, i);
-        struct json_object *name_obj = NULL;
-
-        if (json_object_object_get_ex(device, "Name", &name_obj) &&
-            strcmp(json_object_get_string(name_obj), device_name) == 0) {
-            // Device found, now extract its IMEI
-            struct json_object *imei_obj = NULL;
-            if (json_object_object_get_ex(device, "IMEI", &imei_obj)) {
-                const char *imei = json_object_get_string(imei_obj);
-                json_object_put(root);  // Free the root object
-                return imei;  // Return the IMEI
-            } else {
-                snprintf(log_message, sizeof(log_message), "IMEI not found for device: %s", device_name);
-                log_debug(log_message);
-                json_object_put(root);
-                return NULL;  // Return NULL if IMEI is not found
-            }
-        }
-    }
-
-    // Device not found
-    snprintf(log_message, sizeof(log_message), "Device '%s' not found in JSON.", device_name);
-    log_debug(log_message);
-    json_object_put(root);
-    return NULL;  // Return NULL if device is not found
-}
-
-struct json_object* find_device(const char* device_name, const char* json_path) {
-    char log_message[512];
-    if (device_name == NULL || json_path == NULL) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Invalid arguments passed to find_device.");
-        log_debug(log_message);
-        return NULL;
-    }
-
-    snprintf(log_message, sizeof(log_message), "INFO: Entering find_device function.");
-    log_debug(log_message);
-
-    // Load the JSON file
-    FILE* file = fopen(json_path, "r");
-    if (!file) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Failed to open JSON file: %s", json_path);
-        log_debug(log_message);
-        return NULL;
-    }
-
-    fseek(file, 0, SEEK_END);
-    size_t size = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    char* data = malloc(size + 1);
-    if (!data) {
-        fclose(file);
-        snprintf(log_message, sizeof(log_message), "ERROR: Memory allocation failed.");
-        log_debug(log_message);
-        return NULL;
-    }
-
-    fread(data, 1, size, file);
-    data[size] = '\0';
-    fclose(file);
-
-    struct json_object* root = json_tokener_parse(data);
-    free(data);
-
-    if (!root) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Failed to parse JSON file.");
-        log_debug(log_message);
-        return NULL;
-    }
-
-    // Retrieve the "devices" array
-    struct json_object* devices_array = NULL;
-    if (!json_object_object_get_ex(root, "devices", &devices_array)) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Devices array not found in JSON.");
-        log_debug(log_message);
-        json_object_put(root);
-        return NULL;
-    }
-
-    // Search for the device by name
-    for (int i = 0; i < json_object_array_length(devices_array); i++) {
-        struct json_object* device = json_object_array_get_idx(devices_array, i);
-        struct json_object* name_obj = NULL;
-
-        if (json_object_object_get_ex(device, "Name", &name_obj) &&
-            strcmp(json_object_get_string(name_obj), device_name) == 0) {
-            json_object_get(device);  // Increment ref count to return it safely
-            json_object_put(root);   // Free the root object
-            return device;
-        }
-
-        // Check if this is a folder with children
-        struct json_object* type_obj = NULL;
-        struct json_object* children_obj = NULL;
-        if (json_object_object_get_ex(device, "Type", &type_obj) &&
-            strcmp(json_object_get_string(type_obj), "Folder") == 0 &&
-            json_object_object_get_ex(device, "Children", &children_obj)) {
-            for (int j = 0; j < json_object_array_length(children_obj); j++) {
-                struct json_object* child = json_object_array_get_idx(children_obj, j);
-                struct json_object* child_name = NULL;
-
-                if (json_object_object_get_ex(child, "Name", &child_name) &&
-                    strcmp(json_object_get_string(child_name), device_name) == 0) {
-                    json_object_get(child);  // Increment ref count to return it safely
-                    json_object_put(root);  // Free the root object
-                    return child;
-                }
-            }
-        }
-    }
-
-    snprintf(log_message, sizeof(log_message), "INFO: Device '%s' not found.", device_name);
-    log_debug(log_message);
-    json_object_put(root);
-    return NULL;
-}
 
 static struct fuse_operations fuse_example_operations = {
   .getattr = getattr_callback,
   .open = open_callback,
   .create = create_callback,
-  .read = read_callback,
+  //.read = read_callback,
   .write = write_callback,
   .readdir = readdir_callback,
   .init = init_callback,
