@@ -560,6 +560,7 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_ctime = dir_list.stats[0].st_ctime;
         return 0;
     }
+<<<<<<< HEAD
     if(!strcmp(extract_directory_name(path),"GYRO") || !strcmp(extract_directory_name(path),"GPS") || !strcmp(extract_directory_name(path),"IMEI")){
         stbuf->st_mode = S_IFREG | 0444;  // Set as a regular file
         stbuf->st_size = 0;
@@ -571,6 +572,9 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_ctime = dir_list.stats[0].st_ctime;
         return 0;
     }
+=======
+    
+>>>>>>> parent of c23849d (must have files added)
     char* new_path = strdup(path);
     const char *dir_name = extract_directory_name(path);
     
@@ -606,13 +610,20 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     const char *file_name = extract_directory_name(secondary_path);
     File *file = find_file(&file_list, file_name, parent_dir);
 
+<<<<<<< HEAD
     if (file) { 
         char* model = strrchr(file_name,'.');
         if(!strcmp(model+1,"ACTUATOR")) stbuf->st_mode = __S_IFREG | 0222;
         else if(!strcmp(model+1,"SENSOR")) stbuf->st_mode = __S_IFREG | 0444;
         else stbuf->st_mode = S_IFREG | 0644;
         stbuf->st_size = 0;
+=======
+    if (file) {
+        stbuf->st_mode = S_IFREG | 0644;  // Set as a regular file
+        stbuf->st_size = calculate_file_size(secondary_path);
+>>>>>>> parent of c23849d (must have files added)
         stbuf->st_nlink = 1;
+        stbuf->st_size = file->stat.st_size;  // File size
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
         stbuf->st_atime = file->stat.st_atime;
@@ -641,6 +652,7 @@ static int readdir_callback(const char *path, void *buf, fuse_fill_dir_t filler,
     // Add default entries for the current and parent directories
     filler(buf, ".", NULL, 0);
     filler(buf, "..", NULL, 0);
+<<<<<<< HEAD
     if (!(strcmp(path, "/") == 0)){
         filler(buf, "GYRO", NULL, 0);
         filler(buf, "GPS", NULL, 0);
@@ -648,6 +660,8 @@ static int readdir_callback(const char *path, void *buf, fuse_fill_dir_t filler,
     }
     snprintf(log_message, sizeof(log_message), "DEBUG: Reading after main fillers.");
     log_debug(log_message);
+=======
+>>>>>>> parent of c23849d (must have files added)
 
     // List directories in the current path based on dir_list structure
     for (size_t i = 0; i < dir_list.size; i++) {
@@ -772,6 +786,7 @@ static int utimens_callback(const char *path, const struct timespec tv[2]) {
 
 int check_restrictions(const char *input, const char *parent_directory, ParsedInput* parsed_input) {
     char log_message[512];
+
     regex_t regex;
     const char *pattern = "^[a-zA-Z0-9_]+\\.[a-zA-Z0-9_-]+\\.[0-9]+$";
 
@@ -850,16 +865,20 @@ int check_restrictions(const char *input, const char *parent_directory, ParsedIn
 
 static int create_callback(const char *path, mode_t mode, struct fuse_file_info *fi) {
     (void) fi;  // Suppress unused variable warning
+
     char log_message[512];
     time_t registration_date = time(NULL);
     char parent_dir[1024];
     get_parent_directory(path, parent_dir);
     const char *file_name = extract_directory_name(path);
+<<<<<<< HEAD
     if(!strcmp(file_name,"GYRO") || !strcmp(file_name,"IMEI") || !strcmp(file_name,"GPS")){
         snprintf(log_message, sizeof(log_message), "DEBUG: Creating %s file.", file_name);
         log_debug(log_message);
         return 0;
     }
+=======
+>>>>>>> parent of c23849d (must have files added)
     ParsedInput parsed_input;
 
     if(!check_restrictions(file_name,parent_dir,&parsed_input)){
@@ -1080,15 +1099,6 @@ static int mkdir_callback(const char *path, mode_t permission_bits) {
     // Add the device to JSON
     const char *parent_name = "/";  // Assuming parent_name is the root directory
     add_device_to_json(device, json_path, parent_name);
-
-    mode_t must_have_files_permissions = S_IRGRP | S_IROTH | S_IRUSR;
-    void* unused_variable = NULL;
-    char* copied_path = strdup(path);
-    char* copied_path_2 = strdup(path);
-    char* copied_path_3 = strdup(path);
-    create_callback(strcat(copied_path,"/GYRO"),must_have_files_permissions,unused_variable);
-    create_callback(strcat(copied_path_2,"/GPS"),must_have_files_permissions,unused_variable);
-    create_callback(strcat(copied_path_3,"/IMEI"),must_have_files_permissions,unused_variable);
 
     snprintf(log_message, sizeof(log_message), "INFO: Directory %s created successfully and device added to JSON.", new_path);
     log_debug(log_message);
