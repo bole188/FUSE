@@ -13,10 +13,6 @@ DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been fou
 DEBUG: Getattr callback called with path: /.
 DEBUG: readdir_callback called with path = /
 DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
 DEBUG: Getattr callback called with path: /.
 DEBUG: readdir_callback called with path = /
 DEBUG: Reading after main fillers.
@@ -104,48 +100,3 @@ DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been fou
 DEBUG: Getattr callback called with path: /.
 DEBUG: readdir_callback called with path = /
 DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.
-DEBUG: Getattr callback called with path: /.
-DEBUG: Getattr callback called with path: /.
