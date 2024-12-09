@@ -13,10 +13,9 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <limits.h>
-#include "device_manager.h"
+#include <device_manager.h>
 #include <stdarg.h>
 #include <time.h>
-#include<json-c/json.h>
 #include <mntent.h>
 
 static const char *log_file_path = "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/fuse_debug_log.txt";
@@ -54,6 +53,7 @@ typedef struct {
     char *directory;  // Directory path where the file is located
 >>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
 } File;
+
 
 
 typedef struct {
@@ -244,18 +244,6 @@ long calculate_directory_size(const char *dir_path) {
         }
     }
     return total_size;
-}
-
-void generate_random_string(char *random_string, size_t length) {
-    srand((unsigned int)time(NULL));
-    const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.+-/*?!@#$%^|&";
-    size_t charset_size = strlen(charset);
-
-    for (size_t i = 0; i < length; i++) {
-        int key = rand() % charset_size; // Random index in charset
-        random_string[i] = charset[key];
-    }
-    random_string[length] = '\0'; // Null-terminate the string
 }
 
 void modify_path(const char *path, const char *directory_name, char *new_path) {
@@ -531,16 +519,13 @@ static int open_callback(const char *path, struct fuse_file_info *fi) {
     char log_message[512];
     get_parent_directory(path, parent_dir);
     const char *file_name = extract_directory_name(path);
-    if(!strcmp(file_name,"GPS") || !strcmp(file_name,"IMEI") || !strcmp(file_name,"GYRO")){
-        log_debug("Special file detected.");
-        return 0;
-    }
+
     if (find_file(&file_list, file_name, parent_dir) != NULL){
         snprintf(log_message, sizeof(log_message), "DEBUG: File opened successfully: %s in directory: %s", file_name, parent_dir);
         log_debug(log_message);
         return 0;  // Success
     }
-    snprintf(log_message, sizeof(log_message), "DEBUG: File not opened. File name is: %s.",file_name);
+    snprintf(log_message, sizeof(log_message), "DEBUG: File not opened");
     log_debug(log_message);
     return -ENOENT;
 }
@@ -687,6 +672,8 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
     if(!strcmp(file_name,"GYRO") || !strcmp(file_name,"IMEI") || !strcmp(file_name,"GPS")){
         snprintf(log_message, sizeof(log_message), "DEBUG: Creating %s file.", file_name);
         log_debug(log_message);
+        get_parent_directory(path,parent_dir);
+        //add_file(&file_list, file_name, parent_dir);
         return 0;
     }
     ParsedInput parsed_input;
@@ -737,73 +724,26 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
     return 0;  // Success
 }
 
-
-static int read_callback(const char *path, char *buf, size_t size, off_t offset,
+/*static int read_callback(const char *path, char *buf, size_t size, off_t offset,
     struct fuse_file_info *fi) {
 
-    log_debug("Inside read callback function.");
-    char log_message[512];
-    char parent_dir[1024];
-    get_parent_directory(path, parent_dir);
-    const char *file_name = extract_directory_name(path);
-    if(!strcmp(file_name,"GPS")){
-        snprintf(log_message, sizeof(log_message), "%d %d", rand(), rand());
-        log_debug(log_message);
-        return size;
+  if (strcmp(path, filepath) == 0) {
+    size_t len = strlen(filecontent);
+    if (offset >= len) {
+      return 0;
     }
-    else if(!strcmp(file_name,"GYRO")){
-        snprintf(log_message, sizeof(log_message),"%d %d %d",rand(),rand());
-        log_debug(log_message);
-        return size;
-    }
-    else if(!strcmp(file_name,"IMEI")){
-        const char* dev_imei = find_imei(extract_directory_name(parent_dir),json_path);
-        snprintf(log_message, sizeof(log_message),"Device IMEI: %s.",dev_imei);
-        log_debug(log_message);
-        return size;
-    }
-    File *file = find_file(&file_list, file_name, parent_dir);
-    if (!file) {
-        snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
-        log_debug(log_message);
-        return -ENOENT; // File not found
-    }
-    if(!strcmp(file->read_type,"data")){
-        char rand_seq[8];
-        generate_random_string(rand_seq,8);
-        snprintf(log_message, sizeof(log_message),"RAND SEQ: %s.",rand_seq);
-        log_debug(log_message);
-        return size;
-    }
-    if(!strcmp(file->read_type,"info")){
-        struct json_object *device = find_device(file_name, json_path);
-        struct json_object *name_obj;
-        struct json_object *ser_num;
-        struct json_object *reg_date;
-        struct json_object *sys_id;
-        struct json_object *model;
-        if (json_object_object_get_ex(device, "Name", &name_obj)){
-            snprintf(log_message,sizeof(log_message),"Device Name: %s\n", json_object_get_string(name_obj));
-        }
-        if (json_object_object_get_ex(device, "Model", &model)){
-            snprintf(log_message,sizeof(log_message),"Device model: %s\n", json_object_get_string(model));
-        }
-        if(json_object_object_get_ex(device, "SerialNumber", &ser_num)){
-            snprintf(log_message,sizeof(log_message),"Device serial num: %s\n", json_object_get_string(ser_num));
-        }
-        if(json_object_object_get_ex(device, "RegistrationDate", &reg_date)){
-            snprintf(log_message,sizeof(log_message),"Device reg date: %s\n", json_object_get_string(reg_date));
-        }
-        /*if(json_object_object_get_ex(device, "System id", &sys_id)){
-            snprintf(log_message,sizeof(log_message),"Device sys id: %s\n", json_object_get_string(sys_id));
-        }*/
-        log_debug(log_message);
-        return size;
-    }
-    
 
+    if (offset + size > len) {
+      memcpy(buf, filecontent + offset, len - offset);
+      return len - offset;
+    }
+
+    memcpy(buf, filecontent + offset, size);
     return size;
-}
+  }
+
+  return -ENOENT;
+}*/
 
 static int validate_and_parse_mkdir_input(const char *dir_name, ParsedInput *parsed) {
     regex_t regex;
@@ -1059,16 +999,8 @@ static int write_callback(const char *path, const char *buf, size_t size, off_t 
     }
     snprintf(log_message,sizeof(log_message),"%s, %d",buf,strlen(buf));
     log_debug(log_message);
-    char* dev_model = strrchr(file_name,'.') + 1;
-    if(!strcmp(dev_model,"ACTUATOR")){
-        log_debug("Inside strcmp statement for actuator.");
-        strcpy(file->read_type,buf);
-        snprintf(log_message,sizeof(log_message),"[%s] : %s",file_name,buf);
-        log_debug(log_message);
-        file->stat.st_mtime = time(NULL); // Update modification time
-        return size;
-    }
-    else if(!strcmp(buf,"data\n")){
+    //file->data = (char*)calloc(required_capacity,sizeof(char));
+    if(!strcmp(buf,"data\n")){
         log_debug("inside strcmp statement for data");
         strcpy(file->read_type,"data");
         snprintf(log_message,sizeof(log_message),"[%s] : data",file_name);
@@ -1342,4 +1274,3 @@ int main(int argc, char *argv[])
   return result;
 
 }
-

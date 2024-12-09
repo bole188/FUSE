@@ -14,9 +14,12 @@ INFO: JSON data written successfully to file.
 DEBUG: Parent directory is /Dir_2.1234.9982
 DEBUG: Creating GYRO file.
 DEBUG: Parent directory is /Dir_2.1234.9982
+DEBUG: Parent directory is /Dir_2.1234.9982
 DEBUG: Creating GPS file.
 DEBUG: Parent directory is /Dir_2.1234.9982
+DEBUG: Parent directory is /Dir_2.1234.9982
 DEBUG: Creating IMEI file.
+DEBUG: Parent directory is /Dir_2.1234.9982
 INFO: Directory /Dir_2 created successfully and device added to JSON.
 DEBUG: Getattr callback called with path: /Dir_2.1234.9982.
 DEBUG: Directory: /, and dir_path: /Dir_2
@@ -37,16 +40,16 @@ DEBUG: Directory found: /Dir_2
 <<<<<<< HEAD
 inside calc dir size.
 DEBUG: getattr for directory: /Dir_2, its size is: 0.
-DEBUG: Getattr callback called with path: /Dir_2/File_1.HY-TTC_30.122236.
-DEBUG: Directory: /, and dir_path: /Dir_2/File_1
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_1
-Output path in modify path to remove subs: /Dir_2/File_1.HY-TTC_30
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.1236.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3
+Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
-DEBUG: getattr failed, new_path not found: /Dir_2/File_1 nor secondary_path has been found /Dir_2/File_1.HY-TTC_30.
+DEBUG: getattr failed, new_path not found: /Dir_2/File_3 nor secondary_path has been found /Dir_2/File_3.ACTUATOR.
 DEBUG: Parent directory is /Dir_2
-INFO: File_1, HY-TTC_30, 122236, .
-Output path in modify path to remove subs: /Dir_2/File_1.HY-TTC_30
-DEBUG: Real path: /Dir_2/File_1.HY-TTC_30
+INFO: File_3, ACTUATOR, 1236, .
+Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
+DEBUG: Real path: /Dir_2/File_3.ACTUATOR
 DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
@@ -78,28 +81,28 @@ DEBUG: Directory: /, and dir_path: /Dir_2/File_1
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_1
 Output path in modify path to remove subs: /Dir_2/File_1.HY-TTC_30
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
-INFO: Calculated size for file: File_1.HY-TTC_30 is 0 bytes.
-DEBUG: getattr for file: File_1.HY-TTC_30 in directory: /Dir_2. Its size is: 0.
-Output path in modify path to remove subs: /Dir_2/File_1.HY-TTC_30
-DEBUG: Utimens callback called with /Dir_2/File_1.HY-TTC_30.122236 as path.
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
+DEBUG: Utimens callback called with /Dir_2/File_3.ACTUATOR.1236 as path.
 DEBUG: Parent directory is /Dir_2
-DEBUG: Directory: /, and dir_path: /Dir_2/File_1.HY-TTC_30
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_1.HY-TTC_30
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
 DEBUG: Updated modification time for parent directory: /Dir_2
-DEBUG: Updated timestamps for file: File_1.HY-TTC_30 in directory: /Dir_2
-DEBUG: Getattr callback called with path: /Dir_2/File_1.HY-TTC_30.122236.
-DEBUG: Directory: /, and dir_path: /Dir_2/File_1
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_1
-Output path in modify path to remove subs: /Dir_2/File_1.HY-TTC_30
+DEBUG: Updated timestamps for file: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.1236.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3
+Output path in modify path to remove subs: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Parent directory is /Dir_2
 DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
 INFO: Calculated size for file: File_1.HY-TTC_30 is 0 bytes.
@@ -159,6 +162,50 @@ DEBUG: getattr for file: File_2.ACTUATOR in directory: /Dir_2
 >>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
 DEBUG: Getattr callback called with path: /.
 inside calc dir size.
+DEBUG: Getattr callback called with path: /Dir_2/GYRO.
+DEBUG: Getattr callback called with path: /Dir_2/GPS.
+DEBUG: Getattr callback called with path: /Dir_2/IMEI.
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+Inside open callback.
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: File opened successfully: File_3.ACTUATOR in directory: /Dir_2
+Inside the truncate callback.
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+Outside the truncate callback.
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+Inside write callback function.
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+inf
+, 4
+ERROR: invalid writing.
 DEBUG: Getattr callback called with path: /Dir_2.
 DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
@@ -167,40 +214,59 @@ DEBUG: Directory found: /Dir_2
 inside calc dir size.
 inside calc dir size.
 DEBUG: getattr for directory: /Dir_2, its size is: 0.
-DEBUG: Getattr callback called with path: /Dir_2/File_1.HY-TTC_30.
-DEBUG: Directory: /, and dir_path: /Dir_2/File_1.HY-TTC_30
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_1.HY-TTC_30
+DEBUG: readdir_callback called with path = /Dir_2
+DEBUG: Reading after main fillers.
+DEBUG: Parent_dir: / and path: /Dir_2
+DEBUG: Parent_dir: / and path: /Dir_2
+DEBUG: Listed file: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Getattr callback called with path: /.
+inside calc dir size.
+DEBUG: Getattr callback called with path: /Dir_2/GYRO.
+DEBUG: Getattr callback called with path: /Dir_2/GPS.
+DEBUG: Getattr callback called with path: /Dir_2/IMEI.
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
-INFO: Calculated size for file: File_1.HY-TTC_30 is 0 bytes.
-DEBUG: getattr for file: File_1.HY-TTC_30 in directory: /Dir_2. Its size is: 0.
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: Parent directory is /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
 Inside open callback.
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
-DEBUG: File opened successfully: File_1.HY-TTC_30 in directory: /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+DEBUG: File opened successfully: File_3.ACTUATOR in directory: /Dir_2
 Inside the truncate callback.
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 Outside the truncate callback.
-DEBUG: Getattr callback called with path: /Dir_2/File_1.HY-TTC_30.
-DEBUG: Directory: /, and dir_path: /Dir_2/File_1.HY-TTC_30
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_1.HY-TTC_30
+DEBUG: Getattr callback called with path: /Dir_2/File_3.ACTUATOR.
+DEBUG: Directory: /, and dir_path: /Dir_2/File_3.ACTUATOR
+DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_3.ACTUATOR
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
-INFO: Calculated size for file: File_1.HY-TTC_30 is 0 bytes.
-DEBUG: getattr for file: File_1.HY-TTC_30 in directory: /Dir_2. Its size is: 0.
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
+INFO: Calculated size for file: File_3.ACTUATOR is 0 bytes.
+DEBUG: getattr for file: File_3.ACTUATOR in directory: /Dir_2. Its size is: 0.
 Inside write callback function.
 DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_1.HY-TTC_30 in directory: /Dir_2
+DEBUG: File found: File_3.ACTUATOR in directory: /Dir_2
 info
 , 5
 inside strcmp statement for info
 inside strcmp statement for info, after strcpy.
-[File_1.HY-TTC_30] : info
+[File_3.ACTUATOR] : info
 DEBUG: Getattr callback called with path: /Dir_2.
 DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
@@ -301,7 +367,6 @@ DEBUG: Listed directory: Dir_2
 DEBUG: Getattr callback called with path: /.
 inside calc dir size.
 DEBUG: Getattr callback called with path: /Dir_2.
-DEBUG: Directory: /, and dir_path: /Dir_2
 DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
 DEBUG: Directory found: /Dir_2
 inside calc dir size.
