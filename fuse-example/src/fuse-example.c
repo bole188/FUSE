@@ -23,6 +23,9 @@ static const char *log_file_path = "/home/boskobrankovic/RTOS/FUSE_project/anado
 const char *json_path = "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/json_test_example.json";
 struct json_object* find_device(const char* device_name, const char* json_path) {
     char log_message[512];
+    char *real_device_name = strtok(strdup(device_name), ".");
+    snprintf(log_message, sizeof(log_message), "INFO: %s.", real_device_name);
+    log_debug(log_message);
     if (device_name == NULL || json_path == NULL) {
         snprintf(log_message, sizeof(log_message), "ERROR: Invalid arguments passed to find_device.");
         log_debug(log_message);
@@ -80,7 +83,7 @@ struct json_object* find_device(const char* device_name, const char* json_path) 
         struct json_object* name_obj = NULL;
 
         if (json_object_object_get_ex(device, "Name", &name_obj) &&
-            strcmp(json_object_get_string(name_obj), device_name) == 0) {
+            strcmp(json_object_get_string(name_obj), real_device_name) == 0) {
             json_object_get(device);  // Increment ref count to return it safely
             json_object_put(root);   // Free the root object
             return device;
@@ -97,7 +100,7 @@ struct json_object* find_device(const char* device_name, const char* json_path) 
                 struct json_object* child_name = NULL;
 
                 if (json_object_object_get_ex(child, "Name", &child_name) &&
-                    strcmp(json_object_get_string(child_name), device_name) == 0) {
+                    strcmp(json_object_get_string(child_name), real_device_name) == 0) {
                     json_object_get(child);  // Increment ref count to return it safely
                     json_object_put(root);  // Free the root object
                     return child;
@@ -106,7 +109,7 @@ struct json_object* find_device(const char* device_name, const char* json_path) 
         }
     }
 
-    snprintf(log_message, sizeof(log_message), "INFO: Device '%s' not found.", device_name);
+    snprintf(log_message, sizeof(log_message), "INFO: Device '%s' not found.", real_device_name);
     log_debug(log_message);
     json_object_put(root);
     return NULL;
@@ -651,7 +654,7 @@ static int readdir_callback(const char *path, void *buf, fuse_fill_dir_t filler,
     log_debug(log_message);
 
     // List directories in the current path based on dir_list structure
-    for (size_t i = 0; i < dir_list.size; i++) {
+    for (size_t i = 0; i < dir_list.size; i++) {       
         // Check if the current directory is a subdirectory of the given path
         char parent_dir[1024];
         get_parent_directory(dir_list.dirs[i], parent_dir);
@@ -667,18 +670,15 @@ static int readdir_callback(const char *path, void *buf, fuse_fill_dir_t filler,
             log_debug(log_message);
         }
     }
-    log_debug(".............................................");
     // List files in the current directory based on file_list structure
     for (size_t i = 0; i < file_list.size; i++) {
         if (strcmp(file_list.files[i]->directory, path) == 0) {
-            filler(buf, file_list.files[i]->name, NULL, 0);
-
+            filler(buf, file_list.files[i]->name, NULL, 0); 
             snprintf(log_message, sizeof(log_message), "DEBUG: Listed file: %s in directory: %s", 
                      file_list.files[i]->name, file_list.files[i]->directory);
             log_debug(log_message);
         }
     }
-    log_debug("--------------------------------------------");
     return 0;
 }
 
@@ -914,7 +914,6 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
 
 static int read_callback(const char *path, char *buf, size_t size, off_t offset,
     struct fuse_file_info *fi) {
-
     log_debug("Inside read callback function.");
     char log_message[512];
     char parent_dir[1024];
@@ -950,7 +949,7 @@ static int read_callback(const char *path, char *buf, size_t size, off_t offset,
         return size;
     }
     if(!strcmp(file->read_type,"info")){
-        struct json_object *device = find_device(file_name, json_path);
+        struct json_object *device = find_device(file->name, json_path);
         struct json_object *name_obj;
         struct json_object *ser_num;
         struct json_object *reg_date;
@@ -958,20 +957,25 @@ static int read_callback(const char *path, char *buf, size_t size, off_t offset,
         struct json_object *model;
         if (json_object_object_get_ex(device, "Name", &name_obj)){
             snprintf(log_message,sizeof(log_message),"Device Name: %s\n", json_object_get_string(name_obj));
+            log_debug(log_message);
         }
         if (json_object_object_get_ex(device, "Model", &model)){
             snprintf(log_message,sizeof(log_message),"Device model: %s\n", json_object_get_string(model));
+            log_debug(log_message);
         }
         if(json_object_object_get_ex(device, "SerialNumber", &ser_num)){
             snprintf(log_message,sizeof(log_message),"Device serial num: %s\n", json_object_get_string(ser_num));
+            log_debug(log_message);
         }
         if(json_object_object_get_ex(device, "RegistrationDate", &reg_date)){
             snprintf(log_message,sizeof(log_message),"Device reg date: %s\n", json_object_get_string(reg_date));
+            log_debug(log_message);
         }
-        /*if(json_object_object_get_ex(device, "System id", &sys_id)){
+        if(json_object_object_get_ex(device, "System id", &sys_id)){
             snprintf(log_message,sizeof(log_message),"Device sys id: %s\n", json_object_get_string(sys_id));
-        }*/
-        log_debug(log_message);
+            log_debug(log_message);
+        }
+        
         return size;
     }
     

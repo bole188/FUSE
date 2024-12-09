@@ -1,0 +1,23 @@
+{
+  "devices":[
+    {
+      "Name":"Dir_1",
+      "Model":"TTConnectWave",
+      "SerialNumber":12345,
+      "RegistrationDate":1733779207,
+      "System id":"3675356",
+      "IMEI":"    671",
+      "Type":"Folder",
+      "Children":[
+        {
+          "Name":"File_1",
+          "Model":"HY-TTC_60",
+          "SerialNumber":12345,
+          "RegistrationDate":1733779210,
+          "System id":"2912709",
+          "Type":"File"
+        }
+      ]
+    }
+  ]
+}

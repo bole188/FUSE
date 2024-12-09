@@ -1,10 +1,166 @@
 Filesystem mounted and log file cleared && json file cleared.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: Ignoring .git path: /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: Ignoring .git path: /.git.
 DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
+DEBUG: Getattr callback called with path: /Dir_1.12345.671.
+Output path in modify path to remove subs: /Dir_1.12345
+DEBUG: getattr failed, new_path not found: /Dir_1 nor secondary_path has been found /Dir_1.12345.
+DEBUG: mkdir_callback called with path = /Dir_1.12345.671, permissions = 755
+INFO: Entering add_device_to_json function.
+INFO: Initialized new JSON structure with devices array.
+INFO: Folder added to devices: Dir_1
+INFO: JSON data written successfully to file.
+INFO: Directory /Dir_1 created successfully and device added to JSON.
+DEBUG: Getattr callback called with path: /Dir_1.12345.671.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1, its size is: 0.
+DEBUG: Getattr callback called with path: /.
+DEBUG: Getattr callback called with path: /Dir_1.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1, its size is: 0.
+DEBUG: Getattr callback called with path: /Dir_1/File_1.HY-TTC_60.12345.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1
+Output path in modify path to remove subs: /Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: getattr failed, new_path not found: /Dir_1/File_1 nor secondary_path has been found /Dir_1/File_1.HY-TTC_60.
+DEBUG: Parent directory is /Dir_1
+INFO: File_1, HY-TTC_60, 12345, .
+Output path in modify path to remove subs: /Dir_1/File_1.HY-TTC_60
+DEBUG: Real path: /Dir_1/File_1.HY-TTC_60
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: Added file: File_1.HY-TTC_60 in directory: /Dir_1
+INFO: Entering add_device_to_json function.
+INFO: Adding file to parent folder: Dir_1
+INFO: Folder name: Dir_1, and parent name: Dir_1.
+INFO: File added to folder: Dir_1
+INFO: JSON data written successfully to file.
+DEBUG: File created successfully: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: Getattr callback called with path: /Dir_1/File_1.HY-TTC_60.12345.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1
+Output path in modify path to remove subs: /Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: getattr for file: File_1.HY-TTC_60 in directory: /Dir_1. Its size is: 0.
+Output path in modify path to remove subs: /Dir_1/File_1.HY-TTC_60
+DEBUG: Utimens callback called with /Dir_1/File_1.HY-TTC_60.12345 as path.
+DEBUG: Parent directory is /Dir_1
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1.HY-TTC_60
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: Updated modification time for parent directory: /Dir_1
+DEBUG: Updated timestamps for file: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: Getattr callback called with path: /Dir_1/File_1.HY-TTC_60.12345.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1
+Output path in modify path to remove subs: /Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: getattr for file: File_1.HY-TTC_60 in directory: /Dir_1. Its size is: 0.
+DEBUG: Getattr callback called with path: /Dir_1/File_1.HY-TTC_60.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: getattr for file: File_1.HY-TTC_60 in directory: /Dir_1. Its size is: 0.
+Inside open callback.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: File opened successfully: File_1.HY-TTC_60 in directory: /Dir_1
+Inside the truncate callback.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+Outside the truncate callback.
+DEBUG: Getattr callback called with path: /Dir_1/File_1.HY-TTC_60.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: getattr for file: File_1.HY-TTC_60 in directory: /Dir_1. Its size is: 0.
+Inside write callback function.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+info
+, 5
+inside strcmp statement for info
+inside strcmp statement for info, after strcpy.
+[File_1.HY-TTC_60] : info
+DEBUG: Getattr callback called with path: /Dir_1/File_1.HY-TTC_60.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: getattr for file: File_1.HY-TTC_60 in directory: /Dir_1. Its size is: 0.
+Inside open callback.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: File opened successfully: File_1.HY-TTC_60 in directory: /Dir_1
+Inside read callback function.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+INFO: File_1.
+INFO: Entering find_device function.
+Device Name: File_1
+
+Device model: HY-TTC_60
+
+Device serial num: 12345
+
+Device reg date: 1733779210
+
+Device sys id: 2912709
+
+DEBUG: Getattr callback called with path: /Dir_1/File_1.HY-TTC_60.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: getattr for file: File_1.HY-TTC_60 in directory: /Dir_1. Its size is: 0.
+Inside open callback.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: File opened successfully: File_1.HY-TTC_60 in directory: /Dir_1
+Inside the truncate callback.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+Outside the truncate callback.
+DEBUG: Getattr callback called with path: /Dir_1/File_1.HY-TTC_60.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: getattr for file: File_1.HY-TTC_60 in directory: /Dir_1. Its size is: 0.
+Inside write callback function.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+data
+, 5
+inside strcmp statement for data
+[File_1.HY-TTC_60] : data
+DEBUG: Getattr callback called with path: /Dir_1.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1, its size is: 0.
+DEBUG: readdir_callback called with path = /Dir_1
 DEBUG: Reading after main fillers.
-.............................................
---------------------------------------------
+DEBUG: Parent_dir: / and path: /Dir_1
+DEBUG: Listed file: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: Getattr callback called with path: /.
+DEBUG: Getattr callback called with path: /Dir_1.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1, its size is: 0.
+DEBUG: Getattr callback called with path: /Dir_1/File_1.HY-TTC_60.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1/File_1.HY-TTC_60
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: getattr for file: File_1.HY-TTC_60 in directory: /Dir_1. Its size is: 0.
+Inside open callback.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+DEBUG: File opened successfully: File_1.HY-TTC_60 in directory: /Dir_1
+Inside read callback function.
+DEBUG: Parent directory is /Dir_1
+DEBUG: File found: File_1.HY-TTC_60 in directory: /Dir_1
+RAND SEQ: Gghmex2,RAND SEQ:  id: 2912709
+.
+DEBUG: Getattr callback called with path: /.
+DEBUG: Getattr callback called with path: /Dir_1.
+DEBUG: Directory: /Dir_1, and dir_path: /Dir_1
+DEBUG: Directory found: /Dir_1
+DEBUG: getattr for directory: /Dir_1, its size is: 0.
