@@ -1,203 +1,46 @@
 Filesystem mounted and log file cleared && json file cleared.
 DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
+DEBUG: Ignoring .git path: /.git.
 DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-<<<<<<< HEAD
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
+DEBUG: Ignoring .git path: /.git.
 DEBUG: Getattr callback called with path: /.
 DEBUG: readdir_callback called with path = /
 DEBUG: Reading after main fillers.
+.............................................
+--------------------------------------------
+DEBUG: Getattr callback called with path: /.git.
+DEBUG: Ignoring .git path: /.git.
+DEBUG: Getattr callback called with path: /.git.
+DEBUG: Ignoring .git path: /.git.
 DEBUG: Getattr callback called with path: /.
 DEBUG: readdir_callback called with path = /
 DEBUG: Reading after main fillers.
+.............................................
+--------------------------------------------
 DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
+DEBUG: Ignoring .git path: /.git.
 DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
+DEBUG: Ignoring .git path: /.git.
 DEBUG: Getattr callback called with path: /.
 DEBUG: readdir_callback called with path = /
 DEBUG: Reading after main fillers.
+.............................................
+--------------------------------------------
 DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
+DEBUG: Ignoring .git path: /.git.
 DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
+DEBUG: Ignoring .git path: /.git.
 DEBUG: Getattr callback called with path: /.
 DEBUG: readdir_callback called with path = /
 DEBUG: Reading after main fillers.
+.............................................
+--------------------------------------------
 DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
+DEBUG: Ignoring .git path: /.git.
 DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
+DEBUG: Ignoring .git path: /.git.
 DEBUG: Getattr callback called with path: /.
 DEBUG: readdir_callback called with path = /
 DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.git.
-DEBUG: getattr failed, new_path not found: /.git nor secondary_path has been found /.git.
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-=======
-DEBUG: Getattr callback called with path: /Dir_2.1234.9982.
-Output path in modify path to remove subs: /Dir_2.1234
-DEBUG: getattr failed, new_path not found: /Dir_2 nor secondary_path has been found /Dir_2.1234.
-DEBUG: mkdir_callback called with path = /Dir_2.1234.9982, permissions = 755
-INFO: Entering add_device_to_json function.
-INFO: Initialized new JSON structure with devices array.
-INFO: Folder added to devices: Dir_2
-INFO: JSON data written successfully to file.
-DEBUG: Parent directory is /Dir_2.1234.9982
-DEBUG: Creating GYRO file.
-DEBUG: Parent directory is /Dir_2.1234.9982
-DEBUG: Parent directory is /Dir_2.1234.9982
-DEBUG: Creating GPS file.
-DEBUG: Parent directory is /Dir_2.1234.9982
-DEBUG: Parent directory is /Dir_2.1234.9982
-DEBUG: Creating IMEI file.
-DEBUG: Parent directory is /Dir_2.1234.9982
-INFO: Directory /Dir_2 created successfully and device added to JSON.
-DEBUG: Getattr callback called with path: /Dir_2.1234.9982.
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
-DEBUG: Directory found: /Dir_2
-DEBUG: getattr for directory: /Dir_2
-DEBUG: Getattr callback called with path: /.
-DEBUG: Getattr callback called with path: /Dir_2.
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
-DEBUG: Directory found: /Dir_2
-DEBUG: getattr for directory: /Dir_2
-DEBUG: Getattr callback called with path: /Dir_2/File_2.ACTUATOR.1236.
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_2
-Output path in modify path to remove subs: /Dir_2/File_2.ACTUATOR
-DEBUG: Parent directory is /Dir_2
-DEBUG: getattr failed, new_path not found: /Dir_2/File_2 nor secondary_path has been found /Dir_2/File_2.ACTUATOR.
-DEBUG: Parent directory is /Dir_2
-INFO: File_2, ACTUATOR, 1236, .
-Output path in modify path to remove subs: /Dir_2/File_2.ACTUATOR
-DEBUG: Real path: /Dir_2/File_2.ACTUATOR
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
-DEBUG: Directory found: /Dir_2
-DEBUG: Added file: File_2.ACTUATOR in directory: /Dir_2
-INFO: Entering add_device_to_json function.
-INFO: Adding file to parent folder: Dir_2
-INFO: Folder name: Dir_2, and parent name: Dir_2.
-INFO: File added to folder: Dir_2
-INFO: JSON data written successfully to file.
-DEBUG: File created successfully: File_2.ACTUATOR in directory: /Dir_2
-DEBUG: Getattr callback called with path: /Dir_2/File_2.ACTUATOR.1236.
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_2
-Output path in modify path to remove subs: /Dir_2/File_2.ACTUATOR
-DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_2.ACTUATOR in directory: /Dir_2
-DEBUG: getattr for file: File_2.ACTUATOR in directory: /Dir_2
-Output path in modify path to remove subs: /Dir_2/File_2.ACTUATOR
-DEBUG: Utimens callback called with /Dir_2/File_2.ACTUATOR.1236 as path.
-DEBUG: Parent directory is /Dir_2
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_2.ACTUATOR
-DEBUG: File found: File_2.ACTUATOR in directory: /Dir_2
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
-DEBUG: Directory found: /Dir_2
-DEBUG: Updated modification time for parent directory: /Dir_2
-DEBUG: Updated timestamps for file: File_2.ACTUATOR in directory: /Dir_2
-DEBUG: Getattr callback called with path: /Dir_2/File_2.ACTUATOR.1236.
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_2
-Output path in modify path to remove subs: /Dir_2/File_2.ACTUATOR
-DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_2.ACTUATOR in directory: /Dir_2
-DEBUG: getattr for file: File_2.ACTUATOR in directory: /Dir_2
-DEBUG: Getattr callback called with path: /Dir_2.
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
-DEBUG: Directory found: /Dir_2
-DEBUG: getattr for directory: /Dir_2
-DEBUG: readdir_callback called with path = /Dir_2
-DEBUG: Reading after main fillers.
-DEBUG: Parent_dir: / and path: /Dir_2
-DEBUG: Listed file: File_2.ACTUATOR in directory: /Dir_2
-DEBUG: Getattr callback called with path: /.
-DEBUG: Getattr callback called with path: /Dir_2/GYRO.
-DEBUG: Getattr callback called with path: /Dir_2/GPS.
-DEBUG: Getattr callback called with path: /Dir_2/IMEI.
-DEBUG: Getattr callback called with path: /Dir_2/File_2.ACTUATOR.
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2/File_2.ACTUATOR
-DEBUG: Parent directory is /Dir_2
-DEBUG: File found: File_2.ACTUATOR in directory: /Dir_2
-DEBUG: getattr for file: File_2.ACTUATOR in directory: /Dir_2
-DEBUG: Getattr callback called with path: /.
-DEBUG: Getattr callback called with path: /Dir_2.
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
-DEBUG: Directory found: /Dir_2
-DEBUG: getattr for directory: /Dir_2
-DEBUG: Getattr callback called with path: /.
-DEBUG: readdir_callback called with path = /
-DEBUG: Reading after main fillers.
-DEBUG: Parent_dir: / and path: /
-DEBUG: Listed directory: Dir_2
-DEBUG: Getattr callback called with path: /Dir_2.
-DEBUG: Directory: /Dir_2, and dir_path: /Dir_2
-DEBUG: Directory found: /Dir_2
-DEBUG: getattr for directory: /Dir_2
-DEBUG: Getattr callback called with path: /.
->>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
+.............................................
+--------------------------------------------

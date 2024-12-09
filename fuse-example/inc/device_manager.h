@@ -21,7 +21,7 @@ typedef struct {
     char model[20];
     int serial_number;
     time_t registration_date;
-    int system_id;
+    char system_id[8];
     char imei[8];
     EntryType type;
 } DeviceEntry;
