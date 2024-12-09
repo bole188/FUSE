@@ -40,18 +40,12 @@ typedef struct {
 } ParsedInput;
 
 typedef struct {
-<<<<<<< HEAD
     struct stat stat;  // Metadata
     char *name;        // Name of the file
     char *directory;   // Directory path where the file is located
     char *data;        // Pointer to the file's content
     size_t capacity;   // Allocated size of the data buffer
     char read_type[20];
-=======
-    struct stat stat;
-    char *name;       // Name of the file
-    char *directory;  // Directory path where the file is located
->>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
 } File;
 
 
@@ -372,7 +366,6 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_atime = dir_list.stats[0].st_atime;
         stbuf->st_mtime = dir_list.stats[0].st_mtime;
         stbuf->st_ctime = dir_list.stats[0].st_ctime;
-        add_dir(&dir_list,"/");
         return 0;
     }
     if(!strcmp(extract_directory_name(path),"GYRO") || !strcmp(extract_directory_name(path),"GPS") || !strcmp(extract_directory_name(path),"IMEI")){
@@ -422,16 +415,11 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     File *file = find_file(&file_list, file_name, parent_dir);
 
     if (file) { 
-<<<<<<< HEAD
         char* model = strrchr(file_name,'.');
         if(!strcmp(model+1,"ACTUATOR")) stbuf->st_mode = __S_IFREG | 0222;
         else if(!strcmp(model+1,"SENSOR")) stbuf->st_mode = __S_IFREG | 0444;
         else stbuf->st_mode = S_IFREG | 0644;
         stbuf->st_size = calculate_file_size(secondary_path);
-=======
-        stbuf->st_mode = S_IFREG | 0644;  // Set as a regular file
-        stbuf->st_size = 0;
->>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
         stbuf->st_nlink = 1;
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
@@ -983,7 +971,6 @@ static int unlink_callback(const char *path) {
     return 0;  // Success
 }
 
-<<<<<<< HEAD
 static int write_callback(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
     log_debug("Inside write callback function.");
     char log_message[512];
@@ -1239,19 +1226,13 @@ struct json_object* find_device(const char* device_name, const char* json_path) 
     json_object_put(root);
     return NULL;
 }
-=======
->>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
 
 static struct fuse_operations fuse_example_operations = {
   .getattr = getattr_callback,
   .open = open_callback,
   .create = create_callback,
-<<<<<<< HEAD
   .read = read_callback,
   .write = write_callback,
-=======
-  //.read = read_callback,
->>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
   .readdir = readdir_callback,
   .init = init_callback,
   .mkdir = mkdir_callback,
