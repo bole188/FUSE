@@ -4,15 +4,26 @@
       "Name":"Dir_2",
       "Model":"TTConnectWave",
       "SerialNumber":1234,
+<<<<<<< HEAD
       "RegistrationDate":1733665025,
+=======
+      "RegistrationDate":1733476666,
+>>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
       "IMEI":"   9982",
       "Type":"Folder",
       "Children":[
         {
+<<<<<<< HEAD
           "Name":"File_1",
           "Model":"HY-TTC_30",
           "SerialNumber":122236,
           "RegistrationDate":1733665027,
+=======
+          "Name":"File_2",
+          "Model":"ACTUATOR",
+          "SerialNumber":1236,
+          "RegistrationDate":1733476675,
+>>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
           "Type":"File"
         }
       ]

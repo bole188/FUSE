@@ -41,12 +41,18 @@ typedef struct {
 } ParsedInput;
 
 typedef struct {
+<<<<<<< HEAD
     struct stat stat;  // Metadata
     char *name;        // Name of the file
     char *directory;   // Directory path where the file is located
     char *data;        // Pointer to the file's content
     size_t capacity;   // Allocated size of the data buffer
     char read_type[20];
+=======
+    struct stat stat;
+    char *name;       // Name of the file
+    char *directory;  // Directory path where the file is located
+>>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
 } File;
 
 
@@ -96,6 +102,7 @@ void free_dir_list(DirList *list) {
     list->capacity = 0;
 }
 
+
 void add_file(FileList *list, const char *name, char *directory) {
     if (list->size >= list->capacity) {
         list->capacity *= 2;
@@ -112,8 +119,6 @@ void add_file(FileList *list, const char *name, char *directory) {
     new_file->stat.st_atime = time(NULL);
     new_file->stat.st_mtime = time(NULL);
     new_file->stat.st_ctime = time(NULL);
-    new_file->data = NULL;       // Initialize data to NULL
-    new_file->capacity = 0;     // No capacity allocated initially
 
     list->files[list->size++] = new_file;
 
@@ -122,6 +127,7 @@ void add_file(FileList *list, const char *name, char *directory) {
     snprintf(log_message, sizeof(log_message), "DEBUG: Added file: %s in directory: %s", name, directory);
     log_debug(log_message);
 }
+
 
 
 const char *extract_directory_name(const char *path) {
@@ -214,27 +220,18 @@ int find_dir(const DirList *list, const char *dir_path) {
 }
 
 long calculate_file_size(const char *file_path) {
-    char log_message[512];
-    char parent_dir[1024];
-    get_parent_directory(file_path, parent_dir);
-    const char *file_name = extract_directory_name(file_path);
-
-    // Search for the file in the FileList
-    File *file = find_file(&file_list, file_name, parent_dir);
+    FILE *file = fopen(file_path, "rb");  // Open the file in binary mode
     if (!file) {
-        snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
-        log_debug(log_message);
+        perror("Error opening file");
         return -1;  // Indicate an error
     }
 
-    // Return the size from the file's metadata
-    snprintf(log_message, sizeof(log_message), "INFO: Calculated size for file: %s is %ld bytes.", file_name, file->stat.st_size);
-    log_debug(log_message);
+    fseek(file, 0, SEEK_END);  // Move to the end of the file
+    long size = ftell(file);   // Get the current file pointer position (size in bytes)
+    fclose(file);
 
-    return file->stat.st_size;
+    return size;
 }
-
-
 
 long calculate_directory_size(const char *dir_path) {
     long total_size = 0;
@@ -382,7 +379,6 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     if (strcmp(path, "/") == 0) {
         stbuf->st_mode = S_IFDIR | 0775;
         stbuf->st_nlink = 2;
-        stbuf->st_size = calculate_directory_size(path);
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
         stbuf->st_atime = dir_list.stats[0].st_atime;
@@ -417,12 +413,12 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_nlink = 2;
         stbuf->st_size = calculate_directory_size(new_path);  // Directory size
         stbuf->st_uid = getuid();
-        stbuf->st_gid = getgid();   
+        stbuf->st_gid = getgid();
         stbuf->st_atime = dir_list.stats[dir_index].st_atime;
         stbuf->st_mtime = dir_list.stats[dir_index].st_mtime;
         stbuf->st_ctime = dir_list.stats[dir_index].st_ctime;
 
-        snprintf(log_message, sizeof(log_message), "DEBUG: getattr for directory: %s, its size is: %d.", new_path,stbuf->st_size);
+        snprintf(log_message, sizeof(log_message), "DEBUG: getattr for directory: %s", new_path);
         log_debug(log_message);
         return 0;
     }
@@ -438,11 +434,16 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     File *file = find_file(&file_list, file_name, parent_dir);
 
     if (file) { 
+<<<<<<< HEAD
         char* model = strrchr(file_name,'.');
         if(!strcmp(model+1,"ACTUATOR")) stbuf->st_mode = __S_IFREG | 0222;
         else if(!strcmp(model+1,"SENSOR")) stbuf->st_mode = __S_IFREG | 0444;
         else stbuf->st_mode = S_IFREG | 0644;
         stbuf->st_size = calculate_file_size(secondary_path);
+=======
+        stbuf->st_mode = S_IFREG | 0644;  // Set as a regular file
+        stbuf->st_size = 0;
+>>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
         stbuf->st_nlink = 1;
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
@@ -450,7 +451,7 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_mtime = file->stat.st_mtime;
         stbuf->st_ctime = file->stat.st_ctime;
 
-        snprintf(log_message, sizeof(log_message), "DEBUG: getattr for file: %s in directory: %s. Its size is: %d.", file_name, parent_dir,stbuf->st_size);
+        snprintf(log_message, sizeof(log_message), "DEBUG: getattr for file: %s in directory: %s", file_name, parent_dir);
         log_debug(log_message);
         return 0;
     }
@@ -526,7 +527,6 @@ static void* init_callback(struct fuse_conn_info *conn) {
 }
 
 static int open_callback(const char *path, struct fuse_file_info *fi) {
-    log_debug("Inside open callback.");
     char parent_dir[1024];
     char log_message[512];
     get_parent_directory(path, parent_dir);
@@ -1043,6 +1043,7 @@ static int unlink_callback(const char *path) {
     return 0;  // Success
 }
 
+<<<<<<< HEAD
 static int write_callback(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
     log_debug("Inside write callback function.");
     char log_message[512];
@@ -1306,16 +1307,21 @@ struct json_object* find_device(const char* device_name, const char* json_path) 
     json_object_put(root);
     return NULL;
 }
+=======
+>>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
 
 static struct fuse_operations fuse_example_operations = {
   .getattr = getattr_callback,
   .open = open_callback,
   .create = create_callback,
+<<<<<<< HEAD
   .read = read_callback,
   .write = write_callback,
+=======
+  //.read = read_callback,
+>>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
   .readdir = readdir_callback,
   .init = init_callback,
-  .truncate = truncate_callback,
   .mkdir = mkdir_callback,
   .utimens = utimens_callback,
   .rmdir = rmdir_callback,
