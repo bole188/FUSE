@@ -1,0 +1,24 @@
+<<<<<<< HEAD
+=======
+{
+  "devices":[
+    {
+      "Name":"Dir_2",
+      "Model":"TTConnectWave",
+      "SerialNumber":1234,
+      "RegistrationDate":1733476666,
+      "IMEI":"   9982",
+      "Type":"Folder",
+      "Children":[
+        {
+          "Name":"File_2",
+          "Model":"ACTUATOR",
+          "SerialNumber":1236,
+          "RegistrationDate":1733476675,
+          "Type":"File"
+        }
+      ]
+    }
+  ]
+}
+>>>>>>> parent of 16aaa1b (Write function provided. Next commit should enable proper device handling.)
