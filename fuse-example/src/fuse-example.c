@@ -20,7 +20,10 @@
 #include <mntent.h>
 
 static const char *log_file_path = "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/fuse_debug_log.txt";
+static const char *important_log_file_path = "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/important_log_file.txt";
 const char *json_path = "/home/boskobrankovic/RTOS/FUSE_project/anadolu_fs/fuse-example/json_test_example.json";
+
+
 struct json_object* find_device(const char* device_name, const char* json_path) {
     char log_message[512];
     char *real_device_name = strtok(strdup(device_name), ".");
@@ -194,6 +197,16 @@ const char* find_imei(char *device_name, char *json_path) {
 extern void log_debug(const char *message) {
     
     FILE *log_file = fopen(log_file_path, "a");
+    
+    if (log_file) {
+        fprintf(log_file, "%s\n", message);
+        fclose(log_file);
+    }
+}
+
+extern void important_log_debug(const char *message) {
+    
+    FILE *log_file = fopen(important_log_file_path, "a");
     
     if (log_file) {
         fprintf(log_file, "%s\n", message);
@@ -684,6 +697,10 @@ static int readdir_callback(const char *path, void *buf, fuse_fill_dir_t filler,
 
 static void* init_callback(struct fuse_conn_info *conn) {
     // Clear the log file by opening it in write mode
+    FILE *important_log_file = fopen(important_log_file_path, "w");
+    if(important_log_file){
+        fclose(important_log_file);
+    }
     FILE *log_file = fopen(log_file_path, "w");
     if (log_file) {
         fclose(log_file);  // Just open and close to clear the file content
@@ -921,18 +938,18 @@ static int read_callback(const char *path, char *buf, size_t size, off_t offset,
     const char *file_name = extract_directory_name(path);
     if(!strcmp(file_name,"GPS")){
         snprintf(log_message, sizeof(log_message), "%d %d", rand(), rand());
-        log_debug(log_message);
+        important_log_debug(log_message);
         return size;
     }
     else if(!strcmp(file_name,"GYRO")){
         snprintf(log_message, sizeof(log_message),"%d %d %d",rand(),rand());
-        log_debug(log_message);
+        important_log_debug(log_message);
         return size;
     }
     else if(!strcmp(file_name,"IMEI")){
         const char* dev_imei = find_imei(extract_directory_name(parent_dir),json_path);
         snprintf(log_message, sizeof(log_message),"Device IMEI: %s.",dev_imei);
-        log_debug(log_message);
+        important_log_debug(log_message);
         return size;
     }
     File *file = find_file(&file_list, file_name, parent_dir);
@@ -945,7 +962,7 @@ static int read_callback(const char *path, char *buf, size_t size, off_t offset,
         char rand_seq[8];
         generate_random_string(rand_seq,8);
         snprintf(log_message, sizeof(log_message),"RAND SEQ: %s.",rand_seq);
-        log_debug(log_message);
+        important_log_debug(log_message);
         return size;
     }
     if(!strcmp(file->read_type,"info")){
@@ -957,23 +974,23 @@ static int read_callback(const char *path, char *buf, size_t size, off_t offset,
         struct json_object *model;
         if (json_object_object_get_ex(device, "Name", &name_obj)){
             snprintf(log_message,sizeof(log_message),"Device Name: %s\n", json_object_get_string(name_obj));
-            log_debug(log_message);
+            important_log_debug(log_message);
         }
         if (json_object_object_get_ex(device, "Model", &model)){
             snprintf(log_message,sizeof(log_message),"Device model: %s\n", json_object_get_string(model));
-            log_debug(log_message);
+            important_log_debug(log_message);
         }
         if(json_object_object_get_ex(device, "SerialNumber", &ser_num)){
             snprintf(log_message,sizeof(log_message),"Device serial num: %s\n", json_object_get_string(ser_num));
-            log_debug(log_message);
+            important_log_debug(log_message);
         }
         if(json_object_object_get_ex(device, "RegistrationDate", &reg_date)){
             snprintf(log_message,sizeof(log_message),"Device reg date: %s\n", json_object_get_string(reg_date));
-            log_debug(log_message);
+            important_log_debug(log_message);
         }
         if(json_object_object_get_ex(device, "System id", &sys_id)){
             snprintf(log_message,sizeof(log_message),"Device sys id: %s\n", json_object_get_string(sys_id));
-            log_debug(log_message);
+            important_log_debug(log_message);
         }
         
         return size;
@@ -1232,7 +1249,7 @@ static int write_callback(const char *path, const char *buf, size_t size, off_t 
         log_debug("Inside strcmp statement for actuator.");
         strcpy(file->read_type,buf);
         snprintf(log_message,sizeof(log_message),"[%s] : %s",file_name,buf);
-        log_debug(log_message);
+        important_log_debug(log_message);
         file->stat.st_mtime = time(NULL); // Update modification time
         return size;
     }
@@ -1240,7 +1257,7 @@ static int write_callback(const char *path, const char *buf, size_t size, off_t 
         log_debug("inside strcmp statement for data");
         strcpy(file->read_type,"data");
         snprintf(log_message,sizeof(log_message),"[%s] : data",file_name);
-        log_debug(log_message);
+        important_log_debug(log_message);
         file->stat.st_mtime = time(NULL); // Update modification time
         return size;
     } 
@@ -1249,12 +1266,12 @@ static int write_callback(const char *path, const char *buf, size_t size, off_t 
         strcpy(file->read_type,"info");
         log_debug("inside strcmp statement for info, after strcpy.");
         snprintf(log_message,sizeof(log_message),"[%s] : info",file_name);
-        log_debug(log_message);
+        important_log_debug(log_message);
         file->stat.st_mtime = time(NULL); // Update modification time
         return size;
     }
     else{
-        log_debug("ERROR: invalid writing.");
+        important_log_debug("ERROR: invalid writing.");
         return -EPERM;
     }
 }
@@ -1330,7 +1347,6 @@ static struct fuse_operations fuse_example_operations = {
 
 int main(int argc, char *argv[])
 {
-
   init_file_list(&file_list,10);
   init_dir_list(&dir_list,10);
   int result = fuse_main(argc, argv, &fuse_example_operations, NULL);
