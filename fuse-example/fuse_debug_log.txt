@@ -1,0 +1,3 @@
+Filesystem mounted and log file cleared && json file cleared.
+DEBUG: Getattr callback called with path: /.
+DEBUG: Getattr callback called with path: /.

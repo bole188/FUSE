@@ -40,6 +40,7 @@ int is_valid_model(const char *model, EntryType type) {
     return 0;
 }
 
+
 DeviceEntry *create_and_add_device_entry(const char *name, const char *model, 
                                          int serial_number, time_t registration_date, 
                                          char* imei, EntryType type) {
@@ -49,9 +50,10 @@ DeviceEntry *create_and_add_device_entry(const char *name, const char *model,
         return NULL;
     }
 
+    // Create a new device entry and populate the fields
     DeviceEntry *entry = &device_storage[device_count];
     strncpy(entry->name, name, MAX_NAME_LENGTH - 1);
-    entry->name[MAX_NAME_LENGTH - 1] = '\0';
+    entry->name[MAX_NAME_LENGTH - 1] = '\0'; 
 
     if (type == FOLDER_TYPE) {
         strncpy(entry->model, "TTConnectWave", MAX_MODEL_LENGTH - 1);
@@ -63,15 +65,14 @@ DeviceEntry *create_and_add_device_entry(const char *name, const char *model,
     entry->serial_number = serial_number;
     entry->registration_date = registration_date;
     snprintf(entry->imei,sizeof(imei),"%7s", imei);
+    // Generate a random system ID
     for(int i =0;i<7;i++){
         entry->system_id[i] = '0' + rand()%10;
     }
     entry->system_id[7] = '\0';
     
     entry->type = type;
-
     device_count++;
-
     return entry;
 }
 
@@ -182,8 +183,10 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
             }
         }
     }
+
     file = fopen(json_path, "w");
     if (file) {
+        fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
         fclose(file);
         snprintf(log_message, sizeof(log_message), "INFO: JSON data written successfully to file.");
         log_debug(log_message);
@@ -214,11 +217,11 @@ int remove_folder_and_children(struct json_object *devices_array, const char *fo
             json_object_object_get_ex(device, "Children", &children_obj)) {
 
             if (remove_folder_and_children(children_obj, folder_name)) {
-                return 1;
+                return 1; 
             }
         }
     }
-    return 0; 
+    return 0;
 }
 
 void remove_device_from_json(const char *device_name, const char *json_path) {
@@ -235,6 +238,7 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
 
     struct json_object *root = NULL;
 
+    // Load the JSON file
     FILE *file = fopen(json_path, "r");
     if (file) {
         fseek(file, 0, SEEK_END);
@@ -265,7 +269,7 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
         return;
     }
 
-        for (int i = 0; i < json_object_array_length(devices_array); i++) {
+    for (int i = 0; i < json_object_array_length(devices_array); i++) {
         struct json_object *device = json_object_array_get_idx(devices_array, i);
         struct json_object *children = NULL;
         struct json_object *type = NULL;
@@ -295,6 +299,7 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
 
                     file = fopen(json_path, "w");
                     if (file) {
+                        fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
                         fclose(file);
                         snprintf(log_message, sizeof(log_message), "INFO: JSON data written successfully to file.");
                         log_debug(log_message);
@@ -309,6 +314,8 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
             }
         }
     }
+
+    // If not a file, attempt to remove it as a folder
     if (!remove_folder_and_children(devices_array, device_name)) {
         snprintf(log_message, sizeof(log_message), "ERROR: Device '%s' not found in devices array.", device_name);
         log_debug(log_message);
@@ -319,8 +326,10 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
     snprintf(log_message, sizeof(log_message), "INFO: Folder '%s' removed successfully.", device_name);
     log_debug(log_message);
 
+    // Save the updated JSON back to the file
     file = fopen(json_path, "w");
     if (file) {
+        fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
         fclose(file);
         snprintf(log_message, sizeof(log_message), "INFO: JSON data written successfully to file.");
         log_debug(log_message);
@@ -331,3 +340,4 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
 
     json_object_put(root);
 }
+

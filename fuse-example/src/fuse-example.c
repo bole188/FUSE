@@ -193,7 +193,7 @@ extern void log_debug(const char *message) {
     FILE *log_file = fopen(log_file_path, "a");
     
     if (log_file) {
-        
+        fprintf(log_file, "%s\n", message);
         fclose(log_file);
     }
 }
@@ -203,7 +203,7 @@ extern void important_log_debug(const char *message) {
     FILE *log_file = fopen(important_log_file_path, "a");
     
     if (log_file) {
-        
+        fprintf(log_file, "%s\n", message);
         fclose(log_file);
     }
 }
@@ -916,7 +916,7 @@ static int read_callback(const char *path, char *buf, size_t size, off_t offset,
     if(!strcmp(file->read_type,"data")){
         char rand_seq[8];
         generate_random_string(rand_seq,8);
-        snprintf(log_message, sizeof(log_message),"RAND SEQ: %s.",rand_seq);
+        //snprintf(log_message, sizeof(log_message),"RAND SEQ: %s.",rand_seq);
         important_log_debug(log_message);
         return size;
     }
