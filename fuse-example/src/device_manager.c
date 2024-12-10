@@ -7,19 +7,15 @@ int device_capacity = 0;
 
 void ensure_device_capacity() {
     if (device_storage == NULL) {
-        // Initial allocation for device storage
         device_capacity = INITIAL_CAPACITY;
         device_storage = (DeviceEntry *)malloc(sizeof(DeviceEntry) * device_capacity);
         if (device_storage == NULL) {
-            fprintf(stderr, "Failed to allocate memory for device storage.\n");
             exit(EXIT_FAILURE);
         }
     } else if (device_count >= device_capacity) {
-        // Expand the device storage when capacity is exceeded
-        device_capacity *= 2; // Double the capacity
+        device_capacity *= 2; 
         DeviceEntry *new_storage = (DeviceEntry *)realloc(device_storage, sizeof(DeviceEntry) * device_capacity);
         if (new_storage == NULL) {
-            fprintf(stderr, "Failed to expand memory for device storage.\n");
             exit(EXIT_FAILURE);
         }
         device_storage = new_storage;
@@ -27,56 +23,46 @@ void ensure_device_capacity() {
 }
 
 int is_valid_model(const char *model, EntryType type) {
-    // List of valid prefixes for different entry types
     const char *file_prefixes[] = {"HY-TTC_", "VISION_", "ACTUATOR", "SENSOR"};
     const char *folder_prefix = "TTConnectWave";
 
-    // If it's a folder, the model must match the folder prefix
     if (type == FOLDER_TYPE) {
         if(strncmp(model, folder_prefix, strlen(folder_prefix)) == 0) return 1;
         else return 0;
     }
 
-    // If it's a file, check if the model starts with one of the valid file prefixes
     for (size_t i = 0; i < sizeof(file_prefixes) / sizeof(file_prefixes[0]); i++) {
         if (strncmp(model, file_prefixes[i], strlen(file_prefixes[i])) == 0) {
             return 1;
         }
     }
 
-    // If no valid prefix matches, the model is invalid
     return 0;
 }
-
 
 DeviceEntry *create_and_add_device_entry(const char *name, const char *model, 
                                          int serial_number, time_t registration_date, 
                                          char* imei, EntryType type) {
-    // Ensure there is enough space in the device storage
     ensure_device_capacity();
 
-    // Validate the model
     if (!is_valid_model(model, type)) {
-        fprintf(stderr, "Invalid model type: %s\n", model);
         return NULL;
     }
 
-    // Create a new device entry and populate the fields
     DeviceEntry *entry = &device_storage[device_count];
     strncpy(entry->name, name, MAX_NAME_LENGTH - 1);
-    entry->name[MAX_NAME_LENGTH - 1] = '\0'; // Null-terminate in case of overflow
+    entry->name[MAX_NAME_LENGTH - 1] = '\0';
 
     if (type == FOLDER_TYPE) {
         strncpy(entry->model, "TTConnectWave", MAX_MODEL_LENGTH - 1);
     } else {
         strncpy(entry->model, model, MAX_MODEL_LENGTH - 1);
     }
-    entry->model[MAX_MODEL_LENGTH - 1] = '\0'; // Null-terminate in case of overflow
+    entry->model[MAX_MODEL_LENGTH - 1] = '\0'; 
 
     entry->serial_number = serial_number;
     entry->registration_date = registration_date;
-    snprintf(entry->imei,sizeof(imei),"%7s", imei); // Format IMEI as a 7-character string
-    // Generate a random system ID
+    snprintf(entry->imei,sizeof(imei),"%7s", imei);
     for(int i =0;i<7;i++){
         entry->system_id[i] = '0' + rand()%10;
     }
@@ -84,10 +70,8 @@ DeviceEntry *create_and_add_device_entry(const char *name, const char *model,
     
     entry->type = type;
 
-    // Increment the device count to reflect the new entry
     device_count++;
 
-    // Return the pointer to the newly created entry
     return entry;
 }
 
@@ -105,8 +89,6 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
     log_debug(log_message);
 
     struct json_object *root = NULL;
-
-    // Load the existing JSON file or create a new one with "Root"
     FILE *file = fopen(json_path, "r");
     if (file) {
         fseek(file, 0, SEEK_END);
@@ -124,7 +106,6 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
     }
 
     if (!root) {
-        // Initialize a new JSON structure with "devices"
         root = json_object_new_object();
         if (!root) {
             snprintf(log_message, sizeof(log_message), "ERROR: Failed to initialize root JSON object.");
@@ -136,7 +117,7 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
         if (!devices_array) {
             snprintf(log_message, sizeof(log_message), "ERROR: Failed to initialize devices array.");
             log_debug(log_message);
-            json_object_put(root);  // Clean up root if devices_array creation fails
+            json_object_put(root); 
             return;
         }
 
@@ -146,7 +127,6 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
         log_debug(log_message);
     }
 
-    // Retrieve the "devices" array
     struct json_object *devices_array = NULL;
     if (!json_object_object_get_ex(root, "devices", &devices_array)) {
         devices_array = json_object_new_array();
@@ -159,8 +139,6 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
         json_object_object_add(root, "devices", devices_array);
     }
 
-
-    // Create the JSON object for the device
     struct json_object *device_json = json_object_new_object();
     json_object_object_add(device_json, "Name", json_object_new_string(device->name));
     json_object_object_add(device_json, "Model", json_object_new_string(device->model));
@@ -168,7 +146,6 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
     json_object_object_add(device_json, "RegistrationDate", json_object_new_int64(device->registration_date));
     json_object_object_add(device_json, "System id", json_object_new_string(device->system_id));
     if (device->type == FOLDER_TYPE) {
-        // Add a folder with an empty "Children" array
         json_object_object_add(device_json, "IMEI", json_object_new_string(device->imei));
         json_object_object_add(device_json, "Type", json_object_new_string("Folder"));
         json_object_object_add(device_json, "Children", json_object_new_array());
@@ -178,7 +155,6 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
         log_debug(log_message);
 
     } else if (device->type == FILE_TYPE) {
-        // Add a file to the "Children" array of the specified parent folder
         snprintf(log_message, sizeof(log_message), "INFO: Adding file to parent folder: %s", parent_name);
         log_debug(log_message);
 
@@ -206,11 +182,8 @@ void add_device_to_json(DeviceEntry *device, const char *json_path, const char *
             }
         }
     }
-
-    // Save the updated JSON back to the file
     file = fopen(json_path, "w");
     if (file) {
-        fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
         fclose(file);
         snprintf(log_message, sizeof(log_message), "INFO: JSON data written successfully to file.");
         log_debug(log_message);
@@ -227,29 +200,25 @@ int remove_folder_and_children(struct json_object *devices_array, const char *fo
         struct json_object *device = json_object_array_get_idx(devices_array, i);
         struct json_object *name_obj = NULL;
 
-        // Check if this is the folder we want to delete
         if (json_object_object_get_ex(device, "Name", &name_obj) &&
             strcmp(json_object_get_string(name_obj), folder_name) == 0) {
 
-            // Remove the folder from the array
             json_object_array_del_idx(devices_array, i, 1);
-            return 1; // Folder deleted successfully
+            return 1; 
         }
 
-        // Check if this is a folder and recursively search its children
         struct json_object *type_obj = NULL;
         struct json_object *children_obj = NULL;
         if (json_object_object_get_ex(device, "Type", &type_obj) &&
             strcmp(json_object_get_string(type_obj), "Folder") == 0 &&
             json_object_object_get_ex(device, "Children", &children_obj)) {
 
-            // Recursively attempt to remove the folder from children
             if (remove_folder_and_children(children_obj, folder_name)) {
-                return 1; // Folder deleted successfully
+                return 1;
             }
         }
     }
-    return 0; // Folder not found
+    return 0; 
 }
 
 void remove_device_from_json(const char *device_name, const char *json_path) {
@@ -266,7 +235,6 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
 
     struct json_object *root = NULL;
 
-    // Load the JSON file
     FILE *file = fopen(json_path, "r");
     if (file) {
         fseek(file, 0, SEEK_END);
@@ -289,7 +257,6 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
         return;
     }
 
-    // Retrieve the "devices" array
     struct json_object *devices_array = NULL;
     if (!json_object_object_get_ex(root, "devices", &devices_array)) {
         snprintf(log_message, sizeof(log_message), "ERROR: Failed to retrieve devices array from JSON.");
@@ -298,10 +265,7 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
         return;
     }
 
-    
-
-    // Iterate over devices to check if it is a child file
-    for (int i = 0; i < json_object_array_length(devices_array); i++) {
+        for (int i = 0; i < json_object_array_length(devices_array); i++) {
         struct json_object *device = json_object_array_get_idx(devices_array, i);
         struct json_object *children = NULL;
         struct json_object *type = NULL;
@@ -324,16 +288,13 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
 
                 if (json_object_object_get_ex(child, "Name", &child_name) &&
                     strcmp(json_object_get_string(child_name), device_name) == 0) {
-                    // Remove the child file from the folder
                     json_object_array_del_idx(children, j, 1);
 
                     snprintf(log_message, sizeof(log_message), "INFO: File '%s' removed successfully.", device_name);
                     log_debug(log_message);
 
-                    // Save the updated JSON back to the file
                     file = fopen(json_path, "w");
                     if (file) {
-                        fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
                         fclose(file);
                         snprintf(log_message, sizeof(log_message), "INFO: JSON data written successfully to file.");
                         log_debug(log_message);
@@ -348,8 +309,6 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
             }
         }
     }
-
-    // If not a file, attempt to remove it as a folder
     if (!remove_folder_and_children(devices_array, device_name)) {
         snprintf(log_message, sizeof(log_message), "ERROR: Device '%s' not found in devices array.", device_name);
         log_debug(log_message);
@@ -360,10 +319,8 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
     snprintf(log_message, sizeof(log_message), "INFO: Folder '%s' removed successfully.", device_name);
     log_debug(log_message);
 
-    // Save the updated JSON back to the file
     file = fopen(json_path, "w");
     if (file) {
-        fprintf(file, "%s\n", json_object_to_json_string_ext(root, JSON_C_TO_STRING_PRETTY));
         fclose(file);
         snprintf(log_message, sizeof(log_message), "INFO: JSON data written successfully to file.");
         log_debug(log_message);
@@ -374,4 +331,3 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
 
     json_object_put(root);
 }
-
