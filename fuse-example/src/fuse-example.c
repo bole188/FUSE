@@ -280,15 +280,46 @@ void add_file(FileList *list, const char *name, char *directory) {
 
     File *new_file = (File *)malloc(sizeof(File));
     new_file->name = strdup(name);
-    new_file->directory = strdup(directory);
-    new_file->stat.st_size = 0;
-    new_file->stat.st_mode = 0644;
-    new_file->stat.st_uid = getuid();
-    new_file->stat.st_gid = getgid();
-    new_file->stat.st_atime = time(NULL);
-    new_file->stat.st_mtime = time(NULL);
-    new_file->stat.st_ctime = time(NULL);
-    new_file->data = NULL;       
+    if(!strcmp(name,"GYRO") || !strcmp(name,"IMEI") || !strcmp(name,"GPS")) {
+        log_debug("log_message");
+        new_file->data = (char*)calloc(10,sizeof(char)); 
+        new_file->stat.st_mode = 0444;
+        if(!strcmp(name,"GYRO")){ 
+            size_t len = strlen(new_file->data);
+            new_file->data[len] = '0' + rand()%10;
+            new_file->data[len + 1] = '0' + rand()%10; 
+            new_file->data[len + 2] = '0' + rand()%10; 
+            new_file->data[len + 3] = '\0';
+        } 
+        if(!strcmp(name,"GPS")){
+            log_debug("log_message");
+            size_t len = strlen(new_file->data);
+            new_file->data[len] = '0' + rand()%10;
+            new_file->data[len + 1] = '0' + rand()%10; 
+            new_file->data[len + 2] = '\0';
+        }    
+        if(!strcmp(name,"IMEI")){
+            char *dir = strtok(directory,".");
+
+            const char* dev_imei = find_imei(dir+1,json_path);
+            new_file->data = strdup(dev_imei);
+        }
+        new_file->stat.st_size = strlen(new_file->data);
+        new_file->directory = strdup(directory);
+    }
+    else{
+        new_file->directory = strdup(directory);
+        char* model = strrchr(name,'.');
+        log_debug("log_message");
+        if(!strcmp(model+1,"ACTUATOR")) new_file->stat.st_mode = __S_IFREG | 0222;
+        if(!strcmp(model+1,"SENSOR")) new_file->stat.st_mode = __S_IFREG | 0444;
+        else {
+            new_file->stat.st_size = 0;
+            new_file->stat.st_mode = 0644;
+            new_file->data = (char*)calloc(100,sizeof(char));  
+        }
+    }
+
     new_file->capacity = 0;     
 
     list->files[list->size++] = new_file;
@@ -533,17 +564,6 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         stbuf->st_ctime = dir_list.stats[0].st_ctime;
         return 0;
     }
-    if(!strcmp(extract_directory_name(path),"GYRO") || !strcmp(extract_directory_name(path),"GPS") || !strcmp(extract_directory_name(path),"IMEI")){
-        stbuf->st_mode = S_IFREG | 0444;  
-        stbuf->st_size = 0;
-        stbuf->st_nlink = 1;
-        stbuf->st_uid = getuid();
-        stbuf->st_gid = getgid();
-        stbuf->st_atime = dir_list.stats[0].st_atime;
-        stbuf->st_mtime = dir_list.stats[0].st_mtime;
-        stbuf->st_ctime = dir_list.stats[0].st_ctime;
-        return 0;
-    }
     char* new_path = strdup(path);
     const char *dir_name = extract_directory_name(path);
     
@@ -577,18 +597,15 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     get_parent_directory(secondary_path, parent_dir);
 
     const char *file_name = extract_directory_name(secondary_path);
+
     File *file = find_file(&file_list, file_name, parent_dir);
 
     if (file) { 
-        char* model = strrchr(file_name,'.');
-        if(!strcmp(model+1,"ACTUATOR")) stbuf->st_mode = __S_IFREG | 0222;
-        else if(!strcmp(model+1,"SENSOR")) stbuf->st_mode = __S_IFREG | 0444;
-        else stbuf->st_mode = S_IFREG | 0644;
-        stbuf->st_size = 0;
-        stbuf->st_nlink = 1;
-        stbuf->st_size = file->stat.st_size;  
-        stbuf->st_uid = getuid();
-        stbuf->st_gid = getgid();
+        stbuf->st_mode = file->stat.st_mode;
+        stbuf->st_size = file->stat.st_size;
+        stbuf->st_nlink = file->stat.st_nlink;
+        stbuf->st_uid = file->stat.st_uid;
+        stbuf->st_gid = file->stat.st_gid;
         stbuf->st_atime = file->stat.st_atime;
         stbuf->st_mtime = file->stat.st_mtime;
         stbuf->st_ctime = file->stat.st_ctime;
@@ -832,8 +849,12 @@ static int create_callback(const char *path, mode_t mode, struct fuse_file_info 
     get_parent_directory(path, parent_dir);
     const char *file_name = extract_directory_name(path);
     if(!strcmp(file_name,"GYRO") || !strcmp(file_name,"IMEI") || !strcmp(file_name,"GPS")){
+        if (find_file(&file_list, file_name, parent_dir) != NULL) {
+            return -EEXIST;  
+        }
         snprintf(log_message, sizeof(log_message), "DEBUG: Creating %s file.", file_name);
         log_debug(log_message);
+        add_file(&file_list,file_name,parent_dir);
         return 0;
     }
     ParsedInput parsed_input;
@@ -890,33 +911,26 @@ static int read_callback(const char *path, char *buf, size_t size, off_t offset,
     char log_message[512];
     char parent_dir[1024];
     get_parent_directory(path, parent_dir);
-    const char *file_name = extract_directory_name(path);
-    if(!strcmp(file_name,"GPS")){
-        snprintf(log_message, sizeof(log_message), "%d %d", rand(), rand());
-        important_log_debug(log_message);
-        return size;
-    }
-    else if(!strcmp(file_name,"GYRO")){
-        snprintf(log_message, sizeof(log_message),"%d %d %d",rand(),rand());
-        important_log_debug(log_message);
-        return size;
-    }
-    else if(!strcmp(file_name,"IMEI")){
-        const char* dev_imei = find_imei(extract_directory_name(parent_dir),json_path);
-        snprintf(log_message, sizeof(log_message),"Device IMEI: %s.",dev_imei);
-        important_log_debug(log_message);
-        return size;
-    }
+    char* file_name = extract_directory_name(path);
     File *file = find_file(&file_list, file_name, parent_dir);
     if (!file) {
         snprintf(log_message, sizeof(log_message), "ERROR: File not found: %s in directory: %s", file_name, parent_dir);
         log_debug(log_message);
         return -ENOENT; 
     }
+    if(!strcmp(file_name,"GPS") || !strcmp(file_name,"GYRO") || !strcmp(file_name,"IMEI")){
+        if (offset + size > strlen(file->data)) {
+            memcpy(buf, file->data + offset, strlen(file->data) - offset);
+            return strlen(file->data) - offset;
+        }
+
+        memcpy(buf, file->data + offset, size);
+        return size;
+    }
     if(!strcmp(file->read_type,"data")){
         char rand_seq[8];
         generate_random_string(rand_seq,8);
-        //snprintf(log_message, sizeof(log_message),"RAND SEQ: %s.",rand_seq);
+        snprintf(log_message, sizeof(log_message),"%s",rand_seq);
         important_log_debug(log_message);
         return size;
     }
@@ -1050,7 +1064,12 @@ static int mkdir_callback(const char *path, mode_t permission_bits) {
     snprintf(log_message, sizeof(log_message), "INFO: Directory %s created successfully and device added to JSON.", new_path);
     log_debug(log_message);
     free(parsed.name);
-
+    char* helper_string = strdup(path);
+    create_callback(strcat(helper_string,"/GPS"),__S_IFREG,NULL);
+    helper_string = strdup(path);
+    create_callback(strcat(helper_string,"/GYRO"),__S_IFREG,NULL);
+    helper_string = strdup(path);
+    create_callback(strcat(helper_string,"/IMEI"),__S_IFREG,NULL);
     return 0;
 }
 
@@ -1115,6 +1134,7 @@ void remove_file(FileList *file_list, const char *path) {
             
             free(file->name);
             free(file->directory);
+            free(file->data);
             free(file);
 
             

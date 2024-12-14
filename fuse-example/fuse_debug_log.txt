@@ -1,3 +1,71 @@
 Filesystem mounted and log file cleared && json file cleared.
 DEBUG: Getattr callback called with path: /.
+DEBUG: Getattr callback called with path: /Dir1.123.222.
+Output path in modify path to remove subs: /Dir1.123
+DEBUG: getattr failed, new_path not found: /Dir1 nor secondary_path has been found /Dir1.123.
+DEBUG: mkdir_callback called with path = /Dir1.123.222, permissions = 755
+INFO: Entering add_device_to_json function.
+INFO: Initialized new JSON structure with devices array.
+INFO: Folder added to devices: Dir1
+INFO: JSON data written successfully to file.
+INFO: Directory /Dir1 created successfully and device added to JSON.
+DEBUG: Parent directory is /Dir1.123.222
+DEBUG: Creating GPS file.
+log_message
+log_message
+DEBUG: Added file: GPS in directory: /Dir1.123.222
+DEBUG: Parent directory is /Dir1.123.222
+DEBUG: Creating GYRO file.
+log_message
+DEBUG: Added file: GYRO in directory: /Dir1.123.222
+DEBUG: Parent directory is /Dir1.123.222
+DEBUG: Creating IMEI file.
+log_message
+DEBUG: Added file: IMEI in directory: /Dir1
+DEBUG: Getattr callback called with path: /Dir1.123.222.
+DEBUG: Directory: /Dir1, and dir_path: /Dir1
+DEBUG: Directory found: /Dir1
+DEBUG: getattr for directory: /Dir1, its size is: 0.
 DEBUG: Getattr callback called with path: /.
+DEBUG: readdir_callback called with path = /
+DEBUG: Reading after main fillers.
+DEBUG: Parent_dir: / and path: /
+Extracted dir name is::: Dir1.
+DEBUG: Listed directory: Dir1
+DEBUG: Getattr callback called with path: /.
+DEBUG: Getattr callback called with path: /Dir1.
+DEBUG: Directory: /Dir1, and dir_path: /Dir1
+DEBUG: Directory found: /Dir1
+DEBUG: getattr for directory: /Dir1, its size is: 0.
+DEBUG: Getattr callback called with path: /Dir1.
+DEBUG: Directory: /Dir1, and dir_path: /Dir1
+DEBUG: Directory found: /Dir1
+DEBUG: getattr for directory: /Dir1, its size is: 0.
+DEBUG: readdir_callback called with path = /Dir1
+DEBUG: Reading after main fillers.
+DEBUG: Parent_dir: / and path: /Dir1
+DEBUG: Listed file: IMEI in directory: /Dir1
+DEBUG: Getattr callback called with path: /.
+DEBUG: Getattr callback called with path: /Dir1/GYRO.
+DEBUG: Directory: /Dir1, and dir_path: /Dir1/GYRO
+DEBUG: Parent directory is /Dir1
+DEBUG: getattr failed, new_path not found: /Dir1/GYRO nor secondary_path has been found /Dir1/GYRO.
+DEBUG: Getattr callback called with path: /Dir1/GPS.
+DEBUG: Directory: /Dir1, and dir_path: /Dir1/GPS
+DEBUG: Parent directory is /Dir1
+DEBUG: getattr failed, new_path not found: /Dir1/GPS nor secondary_path has been found /Dir1/GPS.
+DEBUG: Getattr callback called with path: /Dir1/IMEI.
+DEBUG: Directory: /Dir1, and dir_path: /Dir1/IMEI
+DEBUG: Parent directory is /Dir1
+DEBUG: File found: IMEI in directory: /Dir1
+DEBUG: getattr for file: IMEI in directory: /Dir1. Its size is: 7.
+DEBUG: Getattr callback called with path: /Dir1/IMEI.
+DEBUG: Directory: /Dir1, and dir_path: /Dir1/IMEI
+DEBUG: Parent directory is /Dir1
+DEBUG: File found: IMEI in directory: /Dir1
+DEBUG: getattr for file: IMEI in directory: /Dir1. Its size is: 7.
+DEBUG: Getattr callback called with path: /.
+DEBUG: Getattr callback called with path: /Dir1.
+DEBUG: Directory: /Dir1, and dir_path: /Dir1
+DEBUG: Directory found: /Dir1
+DEBUG: getattr for directory: /Dir1, its size is: 0.
