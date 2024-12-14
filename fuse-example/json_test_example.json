@@ -1,11 +1,22 @@
 {
   "devices":[
     {
-      "Name":"Dir1",
+      "Name":"Dir2",
       "Model":"TTConnectWave",
-      "SerialNumber":123,
-      "RegistrationDate":1734180846,
+      "SerialNumber":11113,
+      "RegistrationDate":1734203187,
       "System id":"3675356",
+      "IMEI":"    222",
+      "Type":"Folder",
+      "Children":[
+      ]
+    },
+    {
+      "Name":"Dir2",
+      "Model":"TTConnectWave",
+      "SerialNumber":11113,
+      "RegistrationDate":1734203327,
+      "System id":"1924776",
       "IMEI":"    222",
       "Type":"Folder",
       "Children":[

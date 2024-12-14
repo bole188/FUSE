@@ -283,42 +283,61 @@ void add_file(FileList *list, const char *name, char *directory) {
     if(!strcmp(name,"GYRO") || !strcmp(name,"IMEI") || !strcmp(name,"GPS")) {
         log_debug("log_message");
         new_file->data = (char*)calloc(10,sizeof(char)); 
-        new_file->stat.st_mode = 0444;
+        new_file->stat.st_mode = __S_IFREG | 0444;
         if(!strcmp(name,"GYRO")){ 
+            log_debug("inside strcmp for GYRO.");
             size_t len = strlen(new_file->data);
             new_file->data[len] = '0' + rand()%10;
-            new_file->data[len + 1] = '0' + rand()%10; 
-            new_file->data[len + 2] = '0' + rand()%10; 
-            new_file->data[len + 3] = '\0';
+            new_file->data[len+1] = ' ';
+            new_file->data[len + 2] = '0' + rand()%10;
+            new_file->data[len+3] = ' '; 
+            new_file->data[len + 4] = '0' + rand()%10; 
+            new_file->data[len + 5] = '\n';
+            new_file->data[len + 6] = '\0';
         } 
         if(!strcmp(name,"GPS")){
-            log_debug("log_message");
+            log_debug("inside strcmp for GPS.");
             size_t len = strlen(new_file->data);
             new_file->data[len] = '0' + rand()%10;
-            new_file->data[len + 1] = '0' + rand()%10; 
-            new_file->data[len + 2] = '\0';
+            new_file->data[len+1] = ' ';
+            new_file->data[len + 2] = '0' + rand()%10; 
+            new_file->data[len + 3] = '\n';
+            new_file->data[len + 4] = '\0';
         }    
         if(!strcmp(name,"IMEI")){
+            log_debug("inside strcmp for IMEI.");
             char *dir = strtok(directory,".");
-
             const char* dev_imei = find_imei(dir+1,json_path);
             new_file->data = strdup(dev_imei);
+            new_file->data[strlen(new_file->data)] = '\n';
         }
         new_file->stat.st_size = strlen(new_file->data);
         new_file->directory = strdup(directory);
-    }
+    }  
     else{
+        new_file->data = (char*)calloc(512,sizeof(char));
         new_file->directory = strdup(directory);
         char* model = strrchr(name,'.');
         log_debug("log_message");
         if(!strcmp(model+1,"ACTUATOR")) new_file->stat.st_mode = __S_IFREG | 0222;
-        if(!strcmp(model+1,"SENSOR")) new_file->stat.st_mode = __S_IFREG | 0444;
-        else {
-            new_file->stat.st_size = 0;
-            new_file->stat.st_mode = 0644;
-            new_file->data = (char*)calloc(100,sizeof(char));  
+        else if(!strcmp(model+1,"SENSOR")) {
+            char* helper_string[10];
+            generate_random_string(helper_string,8);
+            new_file->data = strdup(helper_string);
+            new_file->stat.st_mode = __S_IFREG | 0444;
         }
+        else {
+            new_file->stat.st_mode = __S_IFREG | 0644;
+        }  
+        new_file->stat.st_size = strlen(new_file->data);
     }
+
+    new_file->stat.st_nlink = 1;
+    new_file->stat.st_uid = getuid();
+    new_file->stat.st_gid = getgid();
+    new_file->stat.st_atime = time(NULL);
+    new_file->stat.st_mtime = time(NULL);
+    new_file->stat.st_ctime = time(NULL);
 
     new_file->capacity = 0;     
 
@@ -448,7 +467,8 @@ void generate_random_string(char *random_string, size_t length) {
         int key = rand() % charset_size; 
         random_string[i] = charset[key];
     }
-    random_string[length] = '\0'; 
+    random_string[length] = '\n';
+    random_string[length+1] = '\0'; 
 }
 
 void modify_path(const char *path, const char *directory_name, char *new_path) {
@@ -551,7 +571,6 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
     count_dots(extract_directory_name(path),&dot_counter);
 
     char parent_dir[1024];
-
     
     if (strcmp(path, "/") == 0) {
         stbuf->st_mode = S_IFDIR | 0775;
@@ -589,7 +608,6 @@ static int getattr_callback(const char *path, struct stat *stbuf) {
         return 0;
     }
 
-    
     char* secondary_path = strdup(path);
     if(dot_counter == 2){
         modify_path_to_remove_serial(path,secondary_path);
@@ -632,11 +650,6 @@ static int readdir_callback(const char *path, void *buf, fuse_fill_dir_t filler,
     
     filler(buf, ".", NULL, 0);
     filler(buf, "..", NULL, 0);
-    if (!(strcmp(path, "/") == 0)){
-        filler(buf, "GYRO", NULL, 0);
-        filler(buf, "GPS", NULL, 0);
-        filler(buf, "IMEI", NULL, 0); 
-    }
     snprintf(log_message, sizeof(log_message), "DEBUG: Reading after main fillers.");
     log_debug(log_message);
 
@@ -918,53 +931,22 @@ static int read_callback(const char *path, char *buf, size_t size, off_t offset,
         log_debug(log_message);
         return -ENOENT; 
     }
-    if(!strcmp(file_name,"GPS") || !strcmp(file_name,"GYRO") || !strcmp(file_name,"IMEI")){
-        if (offset + size > strlen(file->data)) {
-            memcpy(buf, file->data + offset, strlen(file->data) - offset);
-            return strlen(file->data) - offset;
-        }
-
-        memcpy(buf, file->data + offset, size);
-        return size;
+    char* model = strrchr(file_name,'.');
+    if(model!= NULL && !strcmp(model+1,"ACTUATOR")) return -EPERM;
+    if (offset + size > strlen(file->data)) {
+        memcpy(buf, file->data + offset, strlen(file->data) - offset);
+        return strlen(file->data) - offset;
     }
+    memcpy(buf, file->data + offset, size);
+    
     if(!strcmp(file->read_type,"data")){
-        char rand_seq[8];
-        generate_random_string(rand_seq,8);
-        snprintf(log_message, sizeof(log_message),"%s",rand_seq);
+        snprintf(log_message, sizeof(log_message),"%s",file->data);
         important_log_debug(log_message);
-        return size;
     }
     if(!strcmp(file->read_type,"info")){
-        struct json_object *device = find_device(file->name, json_path);
-        struct json_object *name_obj;
-        struct json_object *ser_num;
-        struct json_object *reg_date;
-        struct json_object *sys_id;
-        struct json_object *model;
-        if (json_object_object_get_ex(device, "Name", &name_obj)){
-            snprintf(log_message,sizeof(log_message),"Device Name: %s\n", json_object_get_string(name_obj));
-            important_log_debug(log_message);
-        }
-        if (json_object_object_get_ex(device, "Model", &model)){
-            snprintf(log_message,sizeof(log_message),"Device model: %s\n", json_object_get_string(model));
-            important_log_debug(log_message);
-        }
-        if(json_object_object_get_ex(device, "SerialNumber", &ser_num)){
-            snprintf(log_message,sizeof(log_message),"Device serial num: %s\n", json_object_get_string(ser_num));
-            important_log_debug(log_message);
-        }
-        if(json_object_object_get_ex(device, "RegistrationDate", &reg_date)){
-            snprintf(log_message,sizeof(log_message),"Device reg date: %s\n", json_object_get_string(reg_date));
-            important_log_debug(log_message);
-        }
-        if(json_object_object_get_ex(device, "System id", &sys_id)){
-            snprintf(log_message,sizeof(log_message),"Device sys id: %s\n", json_object_get_string(sys_id));
-            important_log_debug(log_message);
-        }
-        
-        return size;
+        snprintf(log_message,sizeof(log_message),"[%s] : info",file_name);
+        important_log_debug(log_message);
     }
-    
 
     return size;
 }
@@ -1064,12 +1046,18 @@ static int mkdir_callback(const char *path, mode_t permission_bits) {
     snprintf(log_message, sizeof(log_message), "INFO: Directory %s created successfully and device added to JSON.", new_path);
     log_debug(log_message);
     free(parsed.name);
-    char* helper_string = strdup(path);
-    create_callback(strcat(helper_string,"/GPS"),__S_IFREG,NULL);
-    helper_string = strdup(path);
-    create_callback(strcat(helper_string,"/GYRO"),__S_IFREG,NULL);
-    helper_string = strdup(path);
+    char* helper_string = strdup(new_path);
     create_callback(strcat(helper_string,"/IMEI"),__S_IFREG,NULL);
+    snprintf(log_message, sizeof(log_message), "INFO: Path is: %s.", helper_string);
+    log_debug(log_message);
+    helper_string = strdup(new_path);
+    create_callback(strcat(helper_string,"/GPS"),__S_IFREG,NULL);
+    snprintf(log_message, sizeof(log_message), "INFO: Path is: %s.", helper_string);
+    log_debug(log_message);
+    helper_string = strdup(new_path);
+    create_callback(strcat(helper_string,"/GYRO"),__S_IFREG,NULL);
+    snprintf(log_message, sizeof(log_message), "INFO: Path is: %s.", helper_string);
+    log_debug(log_message);
     return 0;
 }
 
@@ -1088,20 +1076,6 @@ void remove_dir(DirList *list, size_t index) {
     
     list->size--;
 }
-
-static int rmdir_callback(const char *path) {
-    
-    if(!strcmp(extract_directory_name(path),"GYRO") || !strcmp(extract_directory_name(path),"GPS") || !strcmp(extract_directory_name(path),"IMEI")) return 0;
-    int dir_index = find_dir(&dir_list, path);
-    if (dir_index == -1) {
-        return -ENOENT;  
-    }
-    remove_dir(&dir_list, dir_index);
-
-    remove_device_from_json(extract_directory_name(path),json_path);
-    return 0;  
-}
-
 void remove_file(FileList *file_list, const char *path) {
     char log_message[512];
 
@@ -1158,7 +1132,6 @@ static int unlink_callback(const char *path) {
 
     snprintf(log_message, sizeof(log_message), "DEBUG: unlink_callback called with path = %s", path);
     log_debug(log_message);
-    if(!strcmp(extract_directory_name(path),"GYRO") || !strcmp(extract_directory_name(path),"GPS") || !strcmp(extract_directory_name(path),"IMEI")) return 0;
     
     char parent_dir[1024];
     get_parent_directory(path, parent_dir);
@@ -1183,12 +1156,35 @@ static int unlink_callback(const char *path) {
     return 0;  
 }
 
+
+static int rmdir_callback(const char *path) {
+    
+    if(!strcmp(extract_directory_name(path),"GYRO") || !strcmp(extract_directory_name(path),"GPS") || !strcmp(extract_directory_name(path),"IMEI")) return 0;
+    int dir_index = find_dir(&dir_list, path);
+    if (dir_index == -1) {
+        return -ENOENT;  
+    }
+    char* new_path = strdup(path);
+    unlink_callback(strcat(new_path,"/GPS"));
+    new_path = strdup(path);
+    unlink_callback(strcat(new_path,"/GYRO"));
+    new_path = strdup(path);
+    unlink_callback(strcat(path,"/IMEI"));
+    remove_dir(&dir_list, dir_index);
+
+    remove_device_from_json(extract_directory_name(path),json_path);
+    return 0;  
+}
+
+
 static int write_callback(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
     log_debug("Inside write callback function.");
     char log_message[512];
     char parent_dir[1024];
     get_parent_directory(path, parent_dir);
     const char *file_name = extract_directory_name(path);
+    char* model = strrchr(file_name,'.');
+    if(model != NULL && !strcmp(model+1,"SENSOR")) return -EPERM;
     size_t required_capacity = offset + size;
     File *file = find_file(&file_list, file_name, parent_dir);
     if (!file) {
@@ -1196,31 +1192,59 @@ static int write_callback(const char *path, const char *buf, size_t size, off_t 
         log_debug(log_message);
         return -ENOENT; 
     }
-    snprintf(log_message,sizeof(log_message),"%s, %d",buf,strlen(buf));
-    log_debug(log_message);
     char* dev_model = strrchr(file_name,'.') + 1;
     if(!strcmp(dev_model,"ACTUATOR")){
-        log_debug("Inside strcmp statement for actuator.");
-        strcpy(file->read_type,buf);
         snprintf(log_message,sizeof(log_message),"[%s] : %s",file_name,buf);
         important_log_debug(log_message);
+        file->data = strdup(buf);
+        file->stat.st_size = strlen(buf);
         file->stat.st_mtime = time(NULL); 
         return size;
     }
     else if(!strcmp(buf,"data\n")){
-        log_debug("inside strcmp statement for data");
         strcpy(file->read_type,"data");
+        char helper_string[128];
+        generate_random_string(helper_string,8);
+        file->data = strdup(helper_string);
         snprintf(log_message,sizeof(log_message),"[%s] : data",file_name);
         important_log_debug(log_message);
+        file->stat.st_size = strlen(file->data);
         file->stat.st_mtime = time(NULL); 
         return size;
     } 
     else if(!strcmp(buf,"info\n")){
-        log_debug("inside strcmp statement for info");
-        strcpy(file->read_type,"info");
-        log_debug("inside strcmp statement for info, after strcpy.");
+        free(file->data);
+        file->data = (char*)calloc(512,sizeof(char));
         snprintf(log_message,sizeof(log_message),"[%s] : info",file_name);
         important_log_debug(log_message);
+        strcpy(file->read_type,"info");
+        struct json_object *device = find_device(file->name, json_path);
+        struct json_object *name_obj;
+        struct json_object *ser_num;
+        struct json_object *reg_date;
+        struct json_object *sys_id;
+        struct json_object *model;
+        if (json_object_object_get_ex(device, "Name", &name_obj)){
+            snprintf(log_message,sizeof(log_message),"Device Name: %s\n", json_object_get_string(name_obj));
+            strcat(file->data,log_message);
+        }
+        if (json_object_object_get_ex(device, "Model", &model)){
+            snprintf(log_message,sizeof(log_message),"Device model: %s\n", json_object_get_string(model));
+            strcat(file->data,log_message);
+        }
+        if(json_object_object_get_ex(device, "SerialNumber", &ser_num)){
+            snprintf(log_message,sizeof(log_message),"Device serial num: %s\n", json_object_get_string(ser_num));
+            strcat(file->data,log_message);
+        }
+        if(json_object_object_get_ex(device, "RegistrationDate", &reg_date)){
+            snprintf(log_message,sizeof(log_message),"Device reg date: %s\n", json_object_get_string(reg_date));
+            strcat(file->data,log_message);
+        }
+        if(json_object_object_get_ex(device, "System id", &sys_id)){
+            snprintf(log_message,sizeof(log_message),"Device sys id: %s\n", json_object_get_string(sys_id));
+            strcat(file->data,log_message);
+        }
+        file->stat.st_size = strlen(file->data);
         file->stat.st_mtime = time(NULL); 
         return size;
     }
