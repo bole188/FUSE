@@ -1159,7 +1159,6 @@ static int unlink_callback(const char *path) {
 
 static int rmdir_callback(const char *path) {
     
-    if(!strcmp(extract_directory_name(path),"GYRO") || !strcmp(extract_directory_name(path),"GPS") || !strcmp(extract_directory_name(path),"IMEI")) return 0;
     int dir_index = find_dir(&dir_list, path);
     if (dir_index == -1) {
         return -ENOENT;  
@@ -1169,9 +1168,9 @@ static int rmdir_callback(const char *path) {
     new_path = strdup(path);
     unlink_callback(strcat(new_path,"/GYRO"));
     new_path = strdup(path);
-    unlink_callback(strcat(path,"/IMEI"));
+    unlink_callback(strcat(new_path,"/IMEI"));
     remove_dir(&dir_list, dir_index);
-
+    log_debug("before removing dir device");
     remove_device_from_json(extract_directory_name(path),json_path);
     return 0;  
 }

@@ -228,7 +228,7 @@ void remove_device_from_json(const char *device_name, const char *json_path) {
     char log_message[512];
 
     if (device_name == NULL || json_path == NULL) {
-        snprintf(log_message, sizeof(log_message), "ERROR: Invalid arguments passed to remove_device_from_json.");
+        snprintf(log_message, sizeof(log_message), "ERROR: Invalid arguments passed to remove_device_from_json for device: %s.",device_name);
         log_debug(log_message);
         return;
     }

@@ -1,2 +1,0 @@
-[File3.ACTUATOR] : glup tekst
-
