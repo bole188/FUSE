@@ -16,8 +16,6 @@ This project implements a custom filesystem using FUSE (Filesystem in Userspace)
     * [JSON Structure](#json-structure)
     * [Log File](#log-file)
   * [Implementation Details](#implementation-details)
-  * [Building and Running](#building-and-running)
-  * [References](#references)
 
 ## Introduction
 
@@ -29,7 +27,36 @@ The filesystem represents devices using directories and files, each with specifi
 
 ### Fields Explanation
 
-Each device contains fields stored as files, representing its state and configuration.
+- **name**: The name of the file or directory.
+- **model**: Specifies the device model, which can be one of the following:
+
+  - **Electronic Control Units:**
+    - HY-TTC_71
+    - HY-TTC_60
+    - HY-TTC_50
+    - HY-TTC_30
+    - HY-TTC_508
+    - HY-TTC_94
+
+  - **I/O Modules:**
+    - HY-TTC_48
+
+  - **Rugged Operator Interfaces:**
+    - VISION_3
+    - VISION_305
+
+  - **Connectivity Solutions:**
+    - TTConnectWave
+
+  - **Others:**
+    - ACTUATOR
+    - SENSOR
+
+- **serial number**: The hardware's serial number.
+- **registration date**: The Unix timestamp representing when the device was registered in the cloud, corresponding to the creation time of the file or directory.
+- **system id**: A randomly generated seven-digit identification number within the system.
+- **imei**: The unique identifier of the mobile device.
+
 
 ### Directory Rules
 
@@ -72,9 +99,3 @@ All files and directories are structured in a JSON file to maintain persistence.
 
 The implementation is based on libfuse, handling operations such as directory creation, file manipulation, and persistence.
 
-## Building and Running
-
-### Compilation
-
-```sh
-gcc -o wavefs wavefs.c `pkg-config --cflags --libs fuse`
